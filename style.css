@@ -1,0 +1,84 @@
+html {
+  display: block;
+  height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-image: url(./images/bkg-mine.png);
+  background-size: cover;
+  background-position: center center;
+}
+
+#ram-max-numb {
+  color: aliceblue;
+}
+
+.input-row {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+#buttom-menu {
+  background-color: rgba(75, 75, 75, 0.637);
+  width: 100%;
+  position: fixed;
+  bottom: 0px;
+  left: 50%;
+  transform: translate(-50%, 0%);
+  text-align: center;
+  padding: 1.3rem;
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+
+#game-folder-open {
+  background-color: #666666cb;
+  border: none;
+  cursor: pointer;
+  padding: 5px 5px;
+}
+
+#game-folder-open:hover {
+  background-color: #333333cb;
+}
+
+#start-game {
+  background-color: #4CAF50;
+  color: white;
+  font-size: xx-large;
+  border: none;
+  border-radius: 10%;
+  cursor: pointer;
+  padding: 10px 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+#start-game:disabled {
+  background-color: #3e8e41; /* Dark Green */
+  opacity: .8;
+  cursor: not-allowed;
+}
+
+#start-game:hover {
+  background-color: #3e8e41; /* Dark Green */
+}
+
+svg {
+  fill: #333;
+  stroke: #fff;
+  stroke-width: 2px;
+  padding: 10px;
+  border-radius: 50%;
+  background-color: #333;
+  color: #fff;
+}
+
+svg:hover {
+  fill: #666;
+}
