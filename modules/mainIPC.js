@@ -1,9 +1,13 @@
 const configManager = require("./configmanager")
 const os = require("os")
-const { shell } = require('electron')
+const { app, shell } = require('electron')
 const ipc = require("electron").ipcMain
 
 exports.initMainIPC = () => {
+
+  ipc.on("get-ver", (event) =>
+    event.returnValue = app.getVersion()
+  )
 
   ipc.on("get-username", (event) =>
     event.returnValue = configManager.getUsername()

@@ -1,17 +1,20 @@
 {
   "name": "cryptos-launcher",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "private": true,
   "description": "Minecraft launcher for Cryptos Server",
   "main": "launcher.js",
   "scripts": {
     "start": "electron .",
-    "make": "electron-builder --win portable"
+    "build": "electron-builder",
+    "build-all": "electron-builder -mw",
+    "release": "electron-builder --publish=always"
   },
   "author": "Entyen",
   "license": "MIT",
   "dependencies": {
     "axios": "^1.6.2",
+    "electron-is-dev": "^2.0.0",
     "electron-log": "^5.0.1",
     "electron-updater": "^6.1.7",
     "fs-extra": "^11.2.0",

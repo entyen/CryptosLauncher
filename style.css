@@ -23,6 +23,10 @@ body {
   gap: 10px;
 }
 
+#username::selection {
+  background-color: #3e8e41;
+}
+
 #buttom-menu {
   background-color: rgba(75, 75, 75, 0.637);
   width: 100%;
@@ -49,7 +53,7 @@ body {
 }
 
 #start-game {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   font-size: xx-large;
   border: none;
@@ -61,7 +65,7 @@ body {
 
 #start-game:disabled {
   background-color: #3e8e41; /* Dark Green */
-  opacity: .8;
+  opacity: 0.8;
   cursor: not-allowed;
 }
 

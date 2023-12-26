@@ -1,5 +1,6 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
+const isDev = require("electron-is-dev")
 const game = require('./modules/game')
 const mainIPC = require("./modules/mainIPC")
 const ConfigManager = require('./modules/configmanager')
@@ -34,7 +35,6 @@ app.whenReady().then(() => {
     createWindow()
     mainIPC.initMainIPC()
     game.init()
-    console.log("Launcher version: " + app.getVersion())
 })
 
 app.on("window-all-closed", () => {
@@ -49,38 +49,31 @@ app.on("activate", () => {
     }
 })
 
-ipcMain.on("check-auto-update", () => {
+if (process.platform !== 'darwin') {
 
-    if (process.platform !== 'darwin') {
-        if (isDev) {
-            autoUpdater.autoInstallOnAppQuit = false
-            autoUpdater.updateConfigPath = path.join(__dirname, 'dev-app-update.yml')
-        }
-        else {
-            autoUpdater.autoInstallOnAppQuit = true
-        }
+    autoUpdater.updateConfigPath = path.join(__dirname, 'app-update.yml')
+    autoUpdater.autoInstallOnAppQuit = true
 
-        autoUpdater.on('update-downloaded', () => {
-            // win.webContents.send("launcher-update-finished")
-
-        })
-        autoUpdater.on('update-not-available', () => {
-            // win.webContents.send("launcher-update-finished")
-        })
-        autoUpdater.on('error', (err) => {
-            // win.webContents.send("launcher-update-error", err)
-        })
-        autoUpdater.on('download-progress', (progress) => {
-            // win.webContents.send("set-launcher-update-progress", progress.percent.toFixed(2))
-        })
-        autoUpdater.checkForUpdates().catch(err => {
-            // win.webContents.send("launcher-update-error", err)
-        })
-    }
-    else {
+    autoUpdater.on('update-downloaded', () => {
         // win.webContents.send("launcher-update-finished")
-    }
-})
+
+    })
+    autoUpdater.on('update-not-available', () => {
+        // win.webContents.send("launcher-update-finished")
+    })
+    autoUpdater.on('error', (err) => {
+        // win.webContents.send("launcher-update-error", err)
+    })
+    autoUpdater.on('download-progress', (progress) => {
+        // win.webContents.send("set-launcher-update-progress", progress.percent.toFixed(2))
+    })
+    autoUpdater.checkForUpdates().catch(err => {
+        // win.webContents.send("launcher-update-error", err)
+    })
+}
+else {
+    // win.webContents.send("launcher-update-finished")
+}
 
 // exports.LAUNCHER_CONFIG = "./config.json"
 exports.LAUNCHER_NAME = "MC Launcher"
