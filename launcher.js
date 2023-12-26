@@ -1,6 +1,5 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
-const isDev = require("electron-is-dev")
 const game = require('./modules/game')
 const mainIPC = require("./modules/mainIPC")
 const ConfigManager = require('./modules/configmanager')

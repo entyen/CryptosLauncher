@@ -4,8 +4,7 @@ gfopen.addEventListener('click', async (event) => {
 });
 
 const username = document.getElementById('username');
-const name = window.ipc.sendSync('get-username')
-username.value = name
+username.value = window.ipc.sendSync('get-username');
 
 const rammax = document.getElementById("ram-max");
 const rammaxnumb = document.getElementById("ram-max-numb");
