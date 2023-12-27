@@ -94,6 +94,7 @@ function downloadForge() {
 
                 data.on('end', async function () {
                     if (fs.statSync(forgeInstallerFile).size == totalLength) {
+                        setUpdateText("Forge was successfully downloaded!")
                         gameLogger.log("Forge was successfully downloaded!")
                         resolve()
                     }
@@ -105,6 +106,7 @@ function downloadForge() {
 
             }
             else {
+                setUpdateText("Forge Checked")
                 gameLogger.log("Forge installer is already installed")
                 resolve()
             }

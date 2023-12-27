@@ -1,6 +1,6 @@
 {
   "name": "cryptos-launcher",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": true,
   "description": "Minecraft launcher for Cryptos Server",
   "main": "launcher.js",
