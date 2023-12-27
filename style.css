@@ -17,6 +17,11 @@ body {
   color: aliceblue;
 }
 
+#ver {
+  font-size: medium;
+  text-shadow: 0px 0px 1px black;
+}
+
 .input-row {
   display: flex;
   flex-direction: column;

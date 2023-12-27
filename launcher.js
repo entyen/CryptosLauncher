@@ -54,8 +54,8 @@ if (process.platform !== 'darwin') {
     autoUpdater.autoInstallOnAppQuit = true
 
     autoUpdater.on('update-downloaded', () => {
+        win.webContents.send("set-update-text", "Restart Launcher")
         // win.webContents.send("launcher-update-finished")
-
     })
     autoUpdater.on('update-not-available', () => {
         // win.webContents.send("launcher-update-finished")
@@ -64,6 +64,8 @@ if (process.platform !== 'darwin') {
         // win.webContents.send("launcher-update-error", err)
     })
     autoUpdater.on('download-progress', (progress) => {
+        win.webContents.send("set-update-text", "Self update...")
+        win.webContents.send("set-update-progress", progress.percent.toFixed(2))
         // win.webContents.send("set-launcher-update-progress", progress.percent.toFixed(2))
     })
     autoUpdater.checkForUpdates().catch(err => {

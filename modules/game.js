@@ -15,10 +15,10 @@ exports.init = () => {
 }
 
 function setUpdateText(message) {
-    // main.win.webContents.send("set-update-text", message)
+    main.win.webContents.send("set-update-text", message)
 }
 function setUpdateProgress(progress) {
-    // main.win.webContents.send("set-update-progress", progress)
+    main.win.webContents.send("set-update-progress", progress)
 }
 
 function play() {

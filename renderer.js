@@ -43,6 +43,16 @@ window.addEventListener("drop", evt => {
   }
 });
 
+const log = document.getElementById('log')
+window.ipc.receive("set-update-text" ,(msg) => {
+  log.innerHTML = msg
+})
+
+const progress = document.getElementById('progress')
+window.ipc.receive("set-update-progress" ,(prog) => {
+  progress.innerHTML = prog
+})
+
 /**
  * Button disabler on start game.
  * @return disabled: true 
