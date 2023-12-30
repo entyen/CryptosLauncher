@@ -63,8 +63,9 @@ if (process.platform !== 'darwin') {
         // win.webContents.send("launcher-update-error", err)
     })
     autoUpdater.on('download-progress', (progress) => {
+        const percent = Math.floor(progress.percent)
         win.webContents.send("set-update-text", "Self update...")
-        win.webContents.send("set-update-progress", progress.percent.toFixed(2))
+        win.webContents.send("set-update-progress", percent)
         // win.webContents.send("set-launcher-update-progress", progress.percent.toFixed(2))
     })
     autoUpdater.checkForUpdates().catch(err => {

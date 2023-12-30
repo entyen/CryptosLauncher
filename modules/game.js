@@ -66,7 +66,7 @@ function downloadForge() {
             if (!main.FORGE_VERSION) {
                 resolve()
             }
-            setUpdateText("DownloadingForge")
+            setUpdateText("Checking Forge")
             gameLogger.log("Downloading Forge...")
             const forgeInstallerFile = path.join(ConfigManager.getGameDirectory(), `forge-${main.MC_VERSION}-${main.FORGE_VERSION}-installer.jar`)
             const forgeInstallerURL = `https://maven.minecraftforge.net/net/minecraftforge/forge/${main.MC_VERSION}-${main.FORGE_VERSION}/forge-${main.MC_VERSION}-${main.FORGE_VERSION}-installer.jar`

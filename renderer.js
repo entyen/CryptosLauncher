@@ -44,12 +44,12 @@ window.addEventListener("drop", evt => {
 });
 
 const log = document.getElementById('log')
-window.ipc.receive("set-update-text" ,(msg) => {
+window.ipc.receive("set-update-text", (msg) => {
   log.innerHTML = msg
 })
 
 const progress = document.getElementById('progress')
-window.ipc.receive("set-update-progress" ,(prog) => {
+window.ipc.receive("set-update-progress", (prog) => {
   progress.style.width = prog + "%"
 })
 
@@ -57,20 +57,21 @@ window.ipc.receive("set-update-progress" ,(prog) => {
  * Active elements disabler
  * @return disabled: state
  */
-const disable = (obj, state) => obj.setAttribute('disabled', state)
+const disable = (obj) => obj.setAttribute('disabled', true)
+const enable = (obj) => obj.removeAttribute('disabled')
 
 /**
  * Start game button checker.
  */
 const btn = document.getElementById('start-game');
 
-btn.addEventListener('click', async (event) => {
-  disable(btn, true)
-  disable(rammax, true)
-  disable(username, true)
+btn.addEventListener('click', async () => {
+  disable(btn)
+  disable(rammax)
+  disable(username)
   await window.ipc.send("play")
 });
 
 window.ipc.receive("launcher-update-finished", () => {
-  disable(btn, false)
+  enable(btn)
 })
