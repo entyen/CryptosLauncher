@@ -50,14 +50,14 @@ window.ipc.receive("set-update-text" ,(msg) => {
 
 const progress = document.getElementById('progress')
 window.ipc.receive("set-update-progress" ,(prog) => {
-  progress.innerHTML = prog
+  progress.style.width = prog + "%"
 })
 
 /**
- * Button disabler on start game.
- * @return disabled: true 
+ * Active elements disabler
+ * @return disabled: state
  */
-const disableOnRun = (obj) => obj.setAttribute('disabled', 'true')
+const disable = (obj, state) => obj.setAttribute('disabled', state)
 
 /**
  * Start game button checker.
@@ -65,8 +65,12 @@ const disableOnRun = (obj) => obj.setAttribute('disabled', 'true')
 const btn = document.getElementById('start-game');
 
 btn.addEventListener('click', async (event) => {
-  disableOnRun(btn)
-  disableOnRun(rammax)
-  disableOnRun(username)
+  disable(btn, true)
+  disable(rammax, true)
+  disable(username, true)
   await window.ipc.send("play")
 });
+
+window.ipc.receive("launcher-update-finished", () => {
+  disable(btn, false)
+})

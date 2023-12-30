@@ -12,12 +12,6 @@
   </head>
   <body>
     <a id="ver"></a>
-    <br />
-    <a id="log"></a>
-    <br />
-    <a id="progress"></a>
-    <br />
-    <br />
     <div id="buttom-menu">
       <div class="input-row">
         <input id="username" placeholder="Username" spellcheck="false" />
@@ -25,8 +19,16 @@
         <a id="ram-max-numb">0</a>
       </div>
       <div id="right-menu">
-        <button id="game-folder-open">📁</button>
-        <button id="start-game">START</button>
+        <div id="game-folder">
+          <button id="game-folder-open">📁</button>
+        </div>
+        <div id="info-startbutton">
+          <a id="log">...</a>
+          <div id="progressbar">
+            <div id="progress"></div>
+          </div>
+          <button id="start-game">START</button>
+        </div>
       </div>
     </div>
   </body>

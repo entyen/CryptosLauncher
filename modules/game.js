@@ -48,6 +48,8 @@ function play() {
         launcher.on('data', (e) => gameLogger.log(e));
 
         launcher.on("arguments", () => {
+            setUpdateProgress(100)
+            setUpdateText("LaunchingGame");
             setTimeout(() => {
                 main.win.close()
             }, 3000)
@@ -106,7 +108,6 @@ function downloadForge() {
 
             }
             else {
-                setUpdateText("Forge Checked")
                 gameLogger.log("Forge installer is already installed")
                 resolve()
             }

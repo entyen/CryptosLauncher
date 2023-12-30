@@ -54,11 +54,10 @@ if (process.platform !== 'darwin') {
     autoUpdater.autoInstallOnAppQuit = true
 
     autoUpdater.on('update-downloaded', () => {
-        win.webContents.send("set-update-text", "Restart Launcher")
-        // win.webContents.send("launcher-update-finished")
+        win.webContents.send("launcher-update-finished")
     })
     autoUpdater.on('update-not-available', () => {
-        // win.webContents.send("launcher-update-finished")
+        win.webContents.send("launcher-update-finished")
     })
     autoUpdater.on('error', (err) => {
         // win.webContents.send("launcher-update-error", err)
@@ -73,7 +72,7 @@ if (process.platform !== 'darwin') {
     })
 }
 else {
-    // win.webContents.send("launcher-update-finished")
+    win.webContents.send("launcher-update-finished")
 }
 
 // exports.LAUNCHER_CONFIG = "./config.json"
