@@ -34,6 +34,8 @@ function play() {
 
         if (process.platform === "win32") {
             downloadJava(main.JRE_WINDOWS, path.join(jrePath, "jre-windows.zip"), jrePath)
+        } else if (process.platform === "darwin") {
+            downloadJava(main.JRE_OSX, path.join(jrePath, "jre-osx.zip"), jrePath)
         }
         else {
             downloadJava(main.JRE_LINUX, path.join(jrePath, "jre-linux.zip"), jrePath)
@@ -85,8 +87,11 @@ function checkJavaInstallation() {
     return new Promise((resolve, reject) => {
         setUpdateText("AnalyzingJava")
         const jrePath = path.join(ConfigManager.getGameDirectory(), "jre")
-        let jreInstallationFile = path.join(jrePath, "jre-windows.zip")
-        if (process.platform !== "win32") {
+        if (process.platform == "win32") {
+            jreInstallationFile = path.join(jrePath, "jre-windows.zip")
+        } else if (process.platform == "darwin") {
+            jreInstallationFile = path.join(jrePath, "jre-osx.zip")
+        } else {
             jreInstallationFile = path.join(jrePath, "jre-linux.zip")
         }
 
