@@ -47,9 +47,9 @@ window.addEventListener("drop", evt => {
   }
 });
 
-const log = document.getElementById('log')
+const progressInfo = document.getElementById('progress-info')
 window.ipc.receive("set-update-text", (msg) => {
-  log.innerHTML = msg
+  progressInfo.innerHTML = msg
 })
 
 const progress = document.getElementById('progress')

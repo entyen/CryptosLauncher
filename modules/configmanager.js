@@ -9,6 +9,7 @@ const main = require("../launcher")
 
 const sysRoot = process.env.APPDATA || (process.platform == "darwin" ? process.env.HOME + "/Library/Application Support" : process.env.HOME)
 const dataPath = path.join(sysRoot, "../")
+console.log(process.platform)
 const gamePath = path.join(sysRoot, "./.minecraft")
 
 const launcherDir = process.env.CONFIG_DIRECT_PATH || app.getPath("userData")

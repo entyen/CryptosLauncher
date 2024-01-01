@@ -1,12 +1,12 @@
 {
   "name": "cryptos-launcher",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Minecraft launcher for Cryptos Server",
   "main": "launcher.js",
   "scripts": {
     "start": "electron .",
     "build": "electron-builder",
-    "build-all": "electron-builder -mw",
+    "build-linux": "electron-builder -l",
     "release": "electron-builder --publish=always"
   },
   "author": "Entyen",

@@ -267,7 +267,7 @@ let currentModsSize = 0
 async function downloadMods() {
     if (main.MODS_URL) {
         try {
-            setUpdateText("DownloadingMods")
+            setUpdateText("Checking mods")
             gameLogger.log("Downloading Mods...")
             const modsDir = path.join(ConfigManager.getGameDirectory(), "mods")
             if (!fs.existsSync(modsDir)) {

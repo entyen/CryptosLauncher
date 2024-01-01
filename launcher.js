@@ -88,5 +88,6 @@ exports.MC_VERSION = "1.20.1"
 exports.FORGE_VERSION = "47.2.4"
 exports.JRE_WINDOWS = "https://dl.grk.pw/mine/jre-windows.zip"
 exports.JRE_LINUX = "https://dl.grk.pw/mine/jre-linux.zip"
+exports.JRE_OSX = "https://dl.grk.pw/mine/jre-osx.zip"
 exports.MODS_URL = "https://dl.grk.pw/mine/mods.json"
 
