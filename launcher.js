@@ -4,6 +4,7 @@ const game = require('./modules/game')
 const mainIPC = require("./modules/mainIPC")
 const ConfigManager = require('./modules/configmanager')
 const { autoUpdater } = require("electron-updater")
+const isDev = require('electron-is-dev')
 
 const log = require("electron-log")
 log.transports.file.level = "debug"
@@ -17,7 +18,7 @@ const createWindow = () => {
         height: 729,
         webPreferences: {
             contextIsolation: true,
-            preload: path.join(__dirname, 'preload.js')
+            preload: path.join(__dirname, 'preload.js'),
         },
         autoHideMenuBar: true,
         title: exports.LAUNCHER_NAME,
@@ -48,39 +49,44 @@ app.on("activate", () => {
     }
 })
 
-if (process.platform !== 'darwin') {
+ipcMain.on('check-auto-update', () => {
 
-    autoUpdater.updateConfigPath = path.join(__dirname, 'app-update.yml')
-    autoUpdater.autoInstallOnAppQuit = true
+    if (process.platform !== 'darwin') {
 
-    autoUpdater.on('update-downloaded', () => {
+        if (isDev) win?.webContents.send("launcher-update-finished")
+        autoUpdater.updateConfigPath = path.join(__dirname, 'app-update.yml')
+
+        autoUpdater.on('update-downloaded', () => {
+            win.webContents.send("launcher-update-finished")
+            autoUpdater.quitAndInstall();
+        })
+        autoUpdater.on('update-not-available', () => {
+            win.webContents.send("launcher-update-finished")
+        })
+        autoUpdater.on('error', (err) => {
+            win.webContents.send("set-update-text", err)
+        })
+        autoUpdater.on('download-progress', (progress) => {
+            const percent = Math.floor(progress.percent)
+            win.webContents.send("set-update-text", "Self update...")
+            win.webContents.send("set-update-progress", percent)
+        })
+        autoUpdater.checkForUpdates().catch(err => {
+            win.webContents.send("set-update-text", err)
+        })
+
+        if (isDev) return win?.webContents.send("launcher-update-finished")
+    }
+    else {
         win.webContents.send("launcher-update-finished")
-    })
-    autoUpdater.on('update-not-available', () => {
-        win.webContents.send("launcher-update-finished")
-    })
-    autoUpdater.on('error', (err) => {
-        // win.webContents.send("launcher-update-error", err)
-    })
-    autoUpdater.on('download-progress', (progress) => {
-        const percent = Math.floor(progress.percent)
-        win.webContents.send("set-update-text", "Self update...")
-        win.webContents.send("set-update-progress", percent)
-        // win.webContents.send("set-launcher-update-progress", progress.percent.toFixed(2))
-    })
-    autoUpdater.checkForUpdates().catch(err => {
-        // win.webContents.send("launcher-update-error", err)
-    })
-}
-else {
-    win.webContents.send("launcher-update-finished")
-}
+    }
+})
 
 // exports.LAUNCHER_CONFIG = "./config.json"
 exports.LAUNCHER_NAME = "MC Launcher"
 exports.MC_VERSION = "1.20.1"
 exports.FORGE_VERSION = "47.2.4"
-exports.JRE_WINDOWS = "*/jre-windows.zip"
-exports.JRE_LINUX = "*/jre-linux.zip"
-exports.MODS_URL = "*/dl/mc-launcher/mods.json"
+exports.JRE_WINDOWS = "https://dl.grk.pw/mine/jre-windows.zip"
+exports.JRE_LINUX = "https://dl.grk.pw/mine/jre-linux.zip"
+exports.MODS_URL = "https://dl.grk.pw/mine/mods.json"
 

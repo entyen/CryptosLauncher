@@ -1,3 +1,7 @@
+window.addEventListener("load", (event) => {
+  window.ipc.send("check-auto-update")
+});
+
 const gfopen = document.getElementById('game-folder-open');
 gfopen.addEventListener('click', async (event) => {
   await window.ipc.send("game-folder-open")
@@ -74,4 +78,8 @@ btn.addEventListener('click', async () => {
 
 window.ipc.receive("launcher-update-finished", () => {
   enable(btn)
+})
+
+window.ipc.receive("launcher-update-error", (err) => {
+  console.log(err)
 })

@@ -1,6 +1,6 @@
 {
   "name": "cryptos-launcher",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Minecraft launcher for Cryptos Server",
   "main": "launcher.js",
   "scripts": {
@@ -13,6 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^1.6.2",
+    "crypto": "^1.0.1",
     "electron-is-dev": "^2.0.0",
     "electron-log": "^5.0.1",
     "electron-updater": "^6.1.7",

@@ -1,0 +1,4 @@
+owner: entyen
+repo: CryptosLauncher
+provider: github
+updaterCacheDirName: cryptos-launcher-updater
