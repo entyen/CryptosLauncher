@@ -116,7 +116,9 @@ function checkJavaInstallation() {
 
         })
         spawn.stderr.on("data", function (data) {
-            console.log(data.toString())
+            if (process.platform == "darwin" && !!data) {
+                return resolve()
+            }
             if (data.toString().includes("64") && data.toString().includes("17.0")) {
                 data = data.toString().split("\n")[0]
                 var javaVersion = new RegExp('java version').test(data) ? data.split(" ")[2].replace(/"/g, "") : false;
