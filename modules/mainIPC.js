@@ -18,6 +18,15 @@ exports.initMainIPC = () => {
     configManager.saveConfig()
   })
 
+  ipc.on("set-vrPrefix", (event, args) => {
+    configManager.setVrPrefix(args)
+    configManager.saveConfig()
+  })
+
+  ipc.on("get-vrPrefix", (event) =>
+    event.returnValue = configManager.getVrPrefix()
+  )
+
   ipc.on("available-memory", event => {
     const mem = os.totalmem()
     event.returnValue = (mem / 1024 / 1024).toFixed(0)

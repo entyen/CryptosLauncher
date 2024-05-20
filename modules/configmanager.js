@@ -57,7 +57,8 @@ const DEFAULT_CONFIG = {
         },
         launcher: {
             dataDirectory: dataPath,
-            keepLauncherOpen: false
+            keepLauncherOpen: false,
+            vrPrefix: false
         }
     },
     currentAccount: null,
@@ -240,6 +241,19 @@ exports.setMaxRAM = function (maxRAM) {
     config.settings.java.maxRAM = maxRAM
 }
 
+
+//TODO VR PREFIX
+exports.isVrPrefixEnabled = function () {
+    return config.settings.launcher.vrPrefix ? "-XX:+UseZGC" : ""
+}
+
+exports.setVrPrefix = function (def) {
+    return config.settings.launcher.vrPrefix = def
+}
+
+exports.getVrPrefix = function () {
+    return config.settings.launcher.vrPrefix
+}
 
 /**
  * Check if auto authentication is enabled or not

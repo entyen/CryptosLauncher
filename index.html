@@ -1,36 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self'"
-    />
-    <link rel="stylesheet" href="./style.css" />
-  </head>
-  <body>
-    <a id="ver"></a>
-    <div id="buttom-menu">
-      <div class="input-row">
-        <input id="username" placeholder="Username" spellcheck="false" />
-        <input id="ram-max" type="range" />
-        <a id="ram-max-numb">0</a>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+
+<body>
+  <a id="ver"></a>
+  <div id="buttom-menu">
+    <div class="input-row">
+      <input id="username" placeholder="Username" spellcheck="false" />
+      <input id="ram-max" type="range" />
+      <a id="ram-max-numb">0</a>
+      <a>VrPerfix
+        <input type="checkbox" id="vrPrefix" />
+      </a>
+    </div>
+    <div id="right-menu">
+      <div id="game-folder">
+        <button id="game-folder-open">📁</button>
       </div>
-      <div id="right-menu">
-        <div id="game-folder">
-          <button id="game-folder-open">📁</button>
+      <div id="info-startbutton">
+        <a id="progress-info">...</a>
+        <div id="progressbar">
+          <div id="progress"></div>
         </div>
-        <div id="info-startbutton">
-          <a id="progress-info">...</a>
-          <div id="progressbar">
-            <div id="progress"></div>
-          </div>
-          <button id="start-game" disabled>START</button>
-        </div>
+        <button id="start-game" disabled>START</button>
       </div>
     </div>
-  </body>
-  <script src="./renderer.js"></script>
+  </div>
+</body>
+<script src="./renderer.js"></script>
+
 </html>
