@@ -1,5 +1,4 @@
 require('dotenv').config();
-
 const { execSync } = require('child_process');
 
 // Получаем GH_TOKEN из переменных окружения
@@ -11,5 +10,15 @@ if (!GH_TOKEN) {
   process.exit(1); // Выходим с кодом ошибки
 }
 
-// Запускаем electron-builder с передачей GH_TOKEN и всех остальных аргументов
-execSync(`GH_TOKEN=${GH_TOKEN} npx electron-builder`, { stdio: 'inherit' });
+// Устанавливаем команду для выполнения в зависимости от операционной системы
+const command = process.platform === 'win32'
+  ? `$env:GH_TOKEN=${GH_TOKEN}; npx electron-builder --publish always`
+  : `GH_TOKEN=${GH_TOKEN} npx electron-builder`;
+
+// Запускаем команду
+try {
+  execSync(command, { stdio: 'inherit', env: { ...process.env, GH_TOKEN } });
+} catch (err) {
+  console.error('Error executing command:', err.message);
+  process.exit(1); // Выходим с кодом ошибки
+}

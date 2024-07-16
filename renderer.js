@@ -14,7 +14,7 @@ username.value = window.ipc.sendSync("get-username")
 const vrPrefix = document.getElementById("vrPrefix")
 vrPrefix.checked = window.ipc.sendSync("get-vrPrefix") || false
 vrPrefix.addEventListener("change", function (event) {
-    return window.ipc.send("set-vrPrefix", event.target.checked)
+  return window.ipc.send("set-vrPrefix", event.target.checked)
 })
 
 const rammax = document.getElementById("ram-max")
@@ -89,6 +89,9 @@ window.ipc.receive("launcher-update-finished", () => {
   enable(btn)
 })
 
+const errorInfo = document.getElementById("errorInfo")
+
 window.ipc.receive("launcher-update-error", (err) => {
   console.log(err)
+  errorInfo.innerHTML = "Error Click Ctrl + Shift + I"
 })

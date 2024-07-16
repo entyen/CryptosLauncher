@@ -23,6 +23,10 @@ function setUpdateProgress(progress) {
     main.win.webContents.send("set-update-progress", progress)
 }
 
+function updateError(message) {
+    main.win.webContents.send("launcher-update-error", message)
+}
+
 function play() {
     checkJavaInstallation().then((jre = null) => {
         updateAndLaunch(jre)
@@ -173,7 +177,7 @@ async function downloadJava(fileURL, targetPath, jrePath) {
         data.pipe(writer)
         writer.on('error', err => {
             javaLogger.error(err.message)
-            main.win.webContents.send("update-error", "JavaError", err.message)
+            updateError("JavaError: " + err.message)
         })
         writer.on('close', async function () {
             let res = await Axios.head(fileURL)
@@ -195,13 +199,13 @@ async function downloadJava(fileURL, targetPath, jrePath) {
             }
             else {
                 javaLogger.error("Error while downloading java!")
-                main.win.webContents.send("update-error", "JavaError", "")
+                updateError("JavaError: " + "")
             }
 
         })
     } catch (err) {
         javaLogger.error(err.message)
-        main.win.webContents.send("update-error", "JavaError", err.message)
+        updateError("JavaError: " + err.message)
 
     }
 }
@@ -238,7 +242,7 @@ function downloadForge() {
                 data.pipe(writer)
                 writer.on('error', err => {
                     gameLogger.error(err.message)
-                    main.win.webContents.send("update-error", "ForgeError", err.message)
+                    updateError("ForgeError: " + err.message)
                     reject()
                 })
 
@@ -262,7 +266,7 @@ function downloadForge() {
 
         } catch (err) {
             gameLogger.error(err.message)
-            main.win.webContents.send("update-error", "ForgeError", err.message)
+            updateError("ForgeError: " + err.message)
             reject()
 
         }
@@ -327,7 +331,7 @@ async function downloadMods() {
         }
         catch (err) {
             gameLogger.error(err?.message)
-            main.win.webContents.send("update-error", "ModsError", err?.message)
+            updateError("ModsError: " + err?.message)
             return false
         }
     }
@@ -358,12 +362,11 @@ async function analyseMods() {
     }
     catch (err) {
         gameLogger.error(err.message)
-        main.win.webContents.send("update-error", "ModsError", err.message)
+        updateError("ModsError: " + err.message)
     }
 }
 
 async function downloadMod(fileURL, targetPath, modSize) {
-
     return new Promise(async (resolve, reject) => {
 
         try {
@@ -382,7 +385,7 @@ async function downloadMod(fileURL, targetPath, modSize) {
             data.pipe(writer)
             writer.on('error', err => {
                 gameLogger.error(err?.message)
-                main.win.webContents.send("update-error", "ModsError", err?.message)
+                updateError("ModsError: " + err?.message)
                 reject()
             })
 
@@ -395,8 +398,9 @@ async function downloadMod(fileURL, targetPath, modSize) {
                 }
             })
 
-        } catch (e) {
-            console.log(e)
+        } catch (err) {
+            updateError(`ModsError: ${err?.message} = ${fileURL}`)
+            console.error(err)
         }
     })
 }

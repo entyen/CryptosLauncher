@@ -128,3 +128,8 @@ svg {
 svg:hover {
   fill: #666;
 }
+
+#errorInfo {
+  color: red;
+  background-color: black;
+}

@@ -67,9 +67,8 @@ ipcMain.on('check-auto-update', () => {
             win.webContents.send("set-update-text", err)
         })
         autoUpdater.on('download-progress', (progress) => {
-            const percent = Math.floor(progress.percent)
             win.webContents.send("set-update-text", "Self update...")
-            win.webContents.send("set-update-progress", percent)
+            win.webContents.send("set-update-progress", progress)
         })
         autoUpdater.checkForUpdates().catch(err => {
             win.webContents.send("set-update-text", err)
