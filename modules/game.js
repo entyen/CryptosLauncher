@@ -71,11 +71,12 @@ async function updateAndLaunch(jre = null) {
                 forge: main.FORGE_VERSION ? path.join(ConfigManager.getGameDirectory(), `forge-${main.MC_VERSION}-${main.FORGE_VERSION}-installer.jar`) : null,
                 server: "multiplayer"
             }
+            const analyseMod = await analyseMods()
+            if (!analyseMod) return updateError('Дима пошел нахуй!!!')
             //GAME LAUNCH
             launcher.launch(opts).then(() => {
                 setUpdateProgress(100)
                 setUpdateText("LaunchingGame");
-                analyseMods();
                 setTimeout(() => {
                     main.win.close()
                 }, 3000)
@@ -363,8 +364,9 @@ async function analyseMods() {
             if (!sha1Array.includes(modSha1)) {
                 fs.unlinkSync(path.join(modsDir, file))
             }
-        })
+       })
 
+       return true
 
     }
     catch (err) {
