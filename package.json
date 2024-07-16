@@ -23,6 +23,7 @@
     "minecraft-launcher-core": "^3.18.1"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "electron": "^28.1.0",
     "electron-builder": "^24.9.1"
   }

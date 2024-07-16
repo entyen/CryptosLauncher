@@ -10,10 +10,8 @@ if (!GH_TOKEN) {
   process.exit(1); // Выходим с кодом ошибки
 }
 
-// Устанавливаем команду для выполнения в зависимости от операционной системы
-const command = process.platform === 'win32'
-  ? `$env:GH_TOKEN=${GH_TOKEN}; npx electron-builder --publish always`
-  : `GH_TOKEN=${GH_TOKEN} npx electron-builder`;
+// Устанавливаем команду для выполнения
+const command = `cross-env GH_TOKEN=${GH_TOKEN} npx electron-builder --publish always`;
 
 // Запускаем команду
 try {
