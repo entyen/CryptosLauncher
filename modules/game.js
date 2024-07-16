@@ -72,12 +72,7 @@ async function updateAndLaunch(jre = null) {
                 server: "multiplayer"
             }
             //GAME LAUNCH
-            launcher.launch(opts)
-
-            launcher.on('debug', (e) => gameLogger.log(e));
-            launcher.on('data', (e) => gameLogger.log(e));
-
-            launcher.on("arguments", () => {
+            launcher.launch(opts).then(() => {
                 setUpdateProgress(100)
                 setUpdateText("LaunchingGame");
                 analyseMods();
@@ -85,6 +80,18 @@ async function updateAndLaunch(jre = null) {
                     main.win.close()
                 }, 3000)
             })
+
+            launcher.on('debug', (e) => gameLogger.log(e));
+            launcher.on('data', (e) => gameLogger.log(e));
+
+            // launcher.on("arguments", () => {
+            //     setUpdateProgress(100)
+            //     setUpdateText("LaunchingGame");
+            //     analyseMods();
+            //     setTimeout(() => {
+            //         main.win.close()
+            //     }, 3000)
+            // })
         }
     })
 }

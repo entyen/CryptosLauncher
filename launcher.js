@@ -53,7 +53,7 @@ ipcMain.on('check-auto-update', () => {
 
     if (process.platform !== 'darwin') {
 
-        if (isDev) win?.webContents.send("launcher-update-finished")
+        if (isDev) win?.webContents.send("launcher-ready")
         autoUpdater.updateConfigPath = path.join(__dirname, 'app-update.yml')
         autoUpdater.autoInstallOnAppQuit = true
 
@@ -61,7 +61,7 @@ ipcMain.on('check-auto-update', () => {
             win.webContents.send("launcher-update-finished")
         })
         autoUpdater.on('update-not-available', () => {
-            win.webContents.send("launcher-update-finished")
+            win.webContents.send("launcher-ready")
         })
         autoUpdater.on('error', (err) => {
             win.webContents.send("set-update-text", err)
@@ -74,10 +74,10 @@ ipcMain.on('check-auto-update', () => {
             win.webContents.send("set-update-text", err)
         })
 
-        if (isDev) return win?.webContents.send("launcher-update-finished")
+        if (isDev) return win?.webContents.send("launcher-ready")
     }
     else {
-        win.webContents.send("launcher-update-finished")
+        win.webContents.send("launcher-ready")
     }
 })
 

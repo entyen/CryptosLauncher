@@ -85,8 +85,13 @@ btn.addEventListener("click", async () => {
   await window.ipc.send("play")
 })
 
-window.ipc.receive("launcher-update-finished", () => {
+window.ipc.receive("launcher-ready", () => {
   enable(btn)
+})
+
+window.ipc.receive("launcher-update-finished", () => {
+  btn.innerHTML = "Restart"
+  btn.style.backgroundColor = "#ff0000"
 })
 
 const errorInfo = document.getElementById("errorInfo")
