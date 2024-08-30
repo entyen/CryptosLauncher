@@ -4,7 +4,7 @@ window.addEventListener("load", (event) => {
 
 const settingClick = document.getElementById("settings-open")
 settingClick.addEventListener('click', async (_) => {
-  await window.ipc.send("settings")
+  await window.ipc.send("open-settings")
 })
 
 const gfopen = document.getElementById("game-folder-open")

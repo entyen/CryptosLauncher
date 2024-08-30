@@ -8,7 +8,7 @@
     "build": "electron-builder",
     "build-linux": "electron-builder -l",
     "release": "node ./preloadEnv.js --publish=always",
-    "makeModsJson": "node ./utills/createModsjson.js"
+    "makeModsJson": "node ./src/utills/createModsjson.js"
   },
   "author": "Entyen",
   "license": "MIT",

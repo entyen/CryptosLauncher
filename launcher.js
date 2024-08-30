@@ -11,6 +11,7 @@ log.transports.file.level = "debug"
 autoUpdater.logger = log
 
 let win
+let settingsWindow
 
 const createWindow = () => {
     win = new BrowserWindow({
@@ -29,6 +30,38 @@ const createWindow = () => {
 
     exports.win = win
 }
+
+function createSettingsWindow() {
+    settingsWindow = new BrowserWindow({
+        width: 400,
+        height: 300,
+        parent: win,
+        modal: true,
+        show: false,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+        },
+        autoHideMenuBar: true,
+        title: 'Settings',
+        icon: path.join(__dirname, "images", "logo.png")
+    })
+
+    settingsWindow.loadFile('./src/modules/frontend/settings.html')
+
+    exports.settings = settingsWindow
+
+    settingsWindow.on('closed', () => {
+        settingsWindow = null
+    })
+}
+
+ipcMain.on('open-settings', (event) => {
+    if (!settingsWindow) {
+        createSettingsWindow()
+    } else {
+        settingsWindow.show()
+    }
+})
 
 app.whenReady().then(() => {
     ConfigManager.load()
