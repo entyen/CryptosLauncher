@@ -37,7 +37,6 @@ function createSettingsWindow() {
         height: 300,
         parent: win,
         modal: true,
-        show: false,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
         },
