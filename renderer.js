@@ -2,6 +2,11 @@ window.addEventListener("load", (event) => {
   window.ipc.send("check-auto-update")
 })
 
+const settingClick = document.getElementById("settings-open")
+settingClick.addEventListener('click', async (_) => {
+  await window.ipc.send("settings")
+})
+
 const gfopen = document.getElementById("game-folder-open")
 gfopen.addEventListener("click", async (event) => {
   await window.ipc.send("game-folder-open")
@@ -100,3 +105,25 @@ window.ipc.receive("launcher-update-error", (err) => {
   console.log(err)
   errorInfo.innerHTML = "Error Click Ctrl + Shift + I"
 })
+
+let keySequence = [];
+const targetSequence = ['y', 'e', 'm'];
+const maxInterval = 50;
+
+window.addEventListener('keydown', (event) => {
+  const key = event.key.toLowerCase();
+  keySequence.push(key);
+
+  if (keySequence.join('').includes(targetSequence.join(''))) {
+    triggerFunction();
+    keySequence = [];
+  }
+
+  if (keySequence.length > targetSequence.length) {
+    keySequence.shift();
+  }
+});
+
+function triggerFunction() {
+  alert('Функция сработала!')
+}

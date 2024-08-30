@@ -13,7 +13,8 @@ body {
   background-position: center center;
 }
 
-#ram-max-numb, a {
+#ram-max-numb,
+a {
   color: aliceblue;
 }
 
@@ -79,19 +80,22 @@ body {
   border-radius: 10px;
 }
 
-#game-folder {
+#menu-folder {
   margin: 5px 5px -35px 5px;
-}
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 
-#game-folder-open {
-  background-color: #666666cb;
-  border: none;
-  cursor: pointer;
-  padding: 5px 5px;
-}
+  button {
+    background-color: #666666cb;
+    border: none;
+    cursor: pointer;
+    padding: 5px 5px;
+  }
 
-#game-folder-open:hover {
-  background-color: #333333cb;
+  button:hover {
+    background-color: #333333cb;
+  }
 }
 
 #start-game {
