@@ -1,8 +1,8 @@
 const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
-const game = require('./modules/game')
-const mainIPC = require("./modules/mainIPC")
-const ConfigManager = require('./modules/configmanager')
+const game = require('./src/modules/backend/game')
+const mainIPC = require("./src/modules/backend/mainIPC")
+const ConfigManager = require('./src/modules/backend/configmanager')
 const { autoUpdater } = require("electron-updater")
 const isDev = require('electron-is-dev')
 
@@ -25,7 +25,7 @@ const createWindow = () => {
         icon: path.join(__dirname, "images", "logo.png")
     })
 
-    win.loadFile('index.html')
+    win.loadFile('./src/modules/frontend/index.html')
 
     exports.win = win
 }

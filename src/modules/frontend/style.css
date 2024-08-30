@@ -8,7 +8,7 @@ html {
 }
 
 body {
-  background-image: url(./images/bkg-mine.png);
+  background-image: url(../../../images/bkg-mine.png);
   background-size: cover;
   background-position: center center;
 }

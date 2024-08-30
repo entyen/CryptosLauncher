@@ -10,7 +10,7 @@ const AdmZip = require("adm-zip")
 const crypto = require("crypto")
 
 const ConfigManager = require("./configmanager")
-const main = require('../launcher')
+const main = require('../../../launcher')
 
 exports.init = () => {
     ipc.on("play", () => play())

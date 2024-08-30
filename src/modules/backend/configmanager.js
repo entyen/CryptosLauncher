@@ -5,7 +5,7 @@ const { app } = require("electron")
 const ipc = require("electron").ipcMain
 const axios = require("axios")
 
-const main = require("../launcher")
+const main = require("../../../launcher")
 
 const sysRoot = process.env.APPDATA || (process.platform == "darwin" ? process.env.HOME + "/Library/Application Support" : process.env.HOME)
 const dataPath = path.join(sysRoot, "../")
