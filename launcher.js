@@ -37,7 +37,9 @@ function createSettingsWindow() {
         height: 300,
         parent: win,
         modal: true,
+        resizable: false,
         webPreferences: {
+            contextIsolation: true,
             preload: path.join(__dirname, 'preload.js'),
         },
         autoHideMenuBar: true,
