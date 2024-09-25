@@ -2,6 +2,7 @@ const configManager = require("./configmanager")
 const os = require("os")
 const { app, shell } = require('electron')
 const ipc = require("electron").ipcMain
+const GenerateModsJson = require('../../utills/createModsjson')
 
 exports.initMainIPC = () => {
 
@@ -54,5 +55,10 @@ exports.initMainIPC = () => {
 
   ipc.on('get-mod-source', event => {
     event.returnValue = configManager.getModSource()
+  })
+
+  ipc.on('generate-json', () => {
+    GenerateModsJson()
+    return 'Generated'
   })
 }

@@ -124,6 +124,7 @@ window.addEventListener('keydown', (event) => {
   }
 });
 
-function triggerFunction() {
-  alert('Функция сработала!')
+async function triggerFunction() {
+  const slon = await window.ipc.send("generate-json")
+  alert(`Json file ${slon}`)
 }
