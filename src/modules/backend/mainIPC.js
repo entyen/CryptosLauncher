@@ -47,4 +47,12 @@ exports.initMainIPC = () => {
     shell.openPath(configManager.getGameDirectory())
   })
 
+  ipc.on("set-mod-url", (event, args) => {
+    configManager.setModSource(args)
+    configManager.saveConfig()
+  })
+
+  ipc.on('get-mod-source', event => {
+    event.returnValue = configManager.getModSource()
+  })
 }

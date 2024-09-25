@@ -66,7 +66,7 @@ async function updateAndLaunch(jre = null) {
                     max: ConfigManager.getMaxRAM(),
                     min: ConfigManager.getMinRAM()
                 },
-                customArgs: ConfigManager.getVrPrefix() ? [ ConfigManager.isVrPrefixEnabled() ] : [],
+                customArgs: ConfigManager.getVrPrefix() ? [ConfigManager.isVrPrefixEnabled()] : [],
                 javaPath: jre ? path.join(jre, "bin", process.platform === "win32" ? "java.exe" : "java") : null,
                 forge: main.FORGE_VERSION ? path.join(ConfigManager.getGameDirectory(), `forge-${main.MC_VERSION}-${main.FORGE_VERSION}-installer.jar`) : null,
                 server: "multiplayer"
@@ -287,7 +287,9 @@ let currentModsSize = 0
 
 
 async function downloadMods() {
-    if (main.MODS_URL) {
+    const getModsUrl = ConfigManager.getModSource()
+    const MODS_URL = getModsUrl ? `${getModsUrl}/mine/mods.json` : main.MODS_URL
+    if (MODS_URL) {
         try {
             setUpdateText("Checking mods")
             gameLogger.log("Downloading Mods...")
@@ -296,7 +298,7 @@ async function downloadMods() {
                 fs.mkdirSync(modsDir)
             }
 
-            const response = await Axios.get(main.MODS_URL)
+            const response = await Axios.get(MODS_URL)
 
             for (let i = 0; i < response.data.mods.length; i++) {
                 const modFile = path.join(modsDir, response.data.mods[i].name)
@@ -348,12 +350,14 @@ async function downloadMods() {
 
 async function analyseMods() {
     try {
+        const getModsUrl = ConfigManager.getModSource()
+        const MODS_URL = getModsUrl ? `${getModsUrl}/mine/mods.json` : main.MODS_URL
 
         const modsDir = path.join(ConfigManager.getGameDirectory(), "mods")
         if (!fs.existsSync(modsDir)) {
             fs.mkdirSync(modsDir)
         }
-        const response = await Axios.get(main.MODS_URL)
+        const response = await Axios.get(MODS_URL)
         fs.readdirSync(modsDir).forEach(file => {
             let sha1Array = []
             for (let i = 0; i < response.data.mods.length; i++) {
@@ -364,9 +368,9 @@ async function analyseMods() {
             if (!sha1Array.includes(modSha1)) {
                 fs.unlinkSync(path.join(modsDir, file))
             }
-       })
+        })
 
-       return true
+        return true
 
     }
     catch (err) {

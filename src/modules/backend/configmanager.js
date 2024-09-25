@@ -19,8 +19,6 @@ const launcherDir = process.env.CONFIG_DIRECT_PATH || app.getPath("userData")
 
 const logger = require('./logger')('%c[ConfigManager]', 'color: #a02d2a; font-weight: bold')
 
-
-
 /**
  * Retrieve the absolute path of the launcher directory.
  * 
@@ -58,7 +56,8 @@ const DEFAULT_CONFIG = {
         launcher: {
             dataDirectory: dataPath,
             keepLauncherOpen: false,
-            vrPrefix: false
+            vrPrefix: false,
+            modSource: "https://dl.grk.pw"
         }
     },
     currentAccount: null,
@@ -145,6 +144,7 @@ exports.load = function () {
             exports.saveConfig()
         }
         if (doValidate) {
+            // Используем импортированную функцию validateKeySet
             config = validateKeySet(DEFAULT_CONFIG, config)
             exports.saveConfig()
         }
@@ -290,3 +290,14 @@ exports.isKeepLauncherOpenEnabled = function () {
 exports.setKeepLauncherOpenEnabled = function (keepLauncherOpen) {
     config.settings.launcher.keepLauncherOpen = keepLauncherOpen
 }
+
+exports.setModSource = function (url) {
+    config.settings.launcher.modSource = url
+}
+
+/**
+ * Retrieve mod url.
+ * 
+ * @returns {string} mod url.
+ */
+exports.getModSource = () => config?.settings?.launcher?.modSource
