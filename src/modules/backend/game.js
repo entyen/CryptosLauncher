@@ -358,6 +358,8 @@ async function analyseMods() {
         }
         const response = await Axios.get(MODS_URL)
         fs.readdirSync(modsDir).forEach(file => {
+            const jarFileRegex = /\.jar$/i;
+            if(!jarFileRegex.test(file)) return
             let sha1Array = []
             for (let i = 0; i < response.data.mods.length; i++) {
                 sha1Array.push(response.data.mods[i].sha1)
