@@ -4,12 +4,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
   <link rel="stylesheet" href="./style.css" />
 </head>
 
-<body>
+<body class="app">
   <a id="ver"></a><br>
   <a id="errorInfo"></a>
   <div id="buttom-menu">
@@ -17,14 +16,15 @@
       <input id="username" placeholder="Username" spellcheck="false" />
       <input id="ram-max" type="range" />
       <a id="ram-max-numb">0</a>
-      <a>VrPerfix
-        <input type="checkbox" id="vrPrefix" />
-      </a>
     </div>
     <div id="right-menu">
       <div id="menu-folder">
-        <button id="game-folder-open">📁</button>
-        <button id="settings-open">⚙️</button>
+        <button id="game-folder-open">
+          <img src="../../../images/folder.png" alt="Game Folder" />
+        </button>
+        <button id="settings-open">
+          <img src="../../../images/settings.png" alt="Settings" />
+        </button>
       </div>
       <div id="info-startbutton">
         <a id="progress-info">...</a>

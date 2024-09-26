@@ -22,7 +22,6 @@ function setUpdateText(message) {
 function setUpdateProgress(progress) {
     main.win.webContents.send("set-update-progress", progress)
 }
-
 function updateError(message) {
     main.win.webContents.send("launcher-update-error", message)
 }

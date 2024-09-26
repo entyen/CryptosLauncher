@@ -7,11 +7,123 @@ html {
   box-sizing: border-box;
 }
 
-body {
+.app {
   background-image: url(../../../images/bkg-mine.png);
   background-size: cover;
   background-position: center center;
 }
+
+.app-settings {
+  background: linear-gradient(135deg, #3e8e41 30%, #2d6a30 100%);
+  background-size: cover;
+  background-position: center center;
+  color: #fff;
+  font-size: 16px;
+  gap: 12px;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+
+  .list {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    text-shadow: -1px 1px 3px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    padding: 15px;
+    transition: background 0.3s ease, transform 0.3s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+    }
+  }
+
+  label {
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
+  }
+}
+
+
+.app-settings__selector {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+
+  label {
+    margin-right: 10px;
+    color: #fff;
+  }
+
+  select {
+    height: 35px;
+    padding: 5px 10px;
+    border: 1px solid #fff;
+    border-radius: 5px;
+    background-color: #444;
+    color: #fff;
+    font-size: 16px;
+    appearance: none;
+    cursor: pointer;
+
+    &::after {
+      content: '▼';
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #fff;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: #3e8e41;
+    }
+  }
+}
+
+.app-settings__vrPrefix {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  a {
+    color: #fff;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
+  }
+
+  input[type="checkbox"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #fff;
+    border-radius: 5px;
+    position: relative;
+    cursor: pointer;
+
+    &:checked {
+      background: #3e8e41;
+      border-color: #3e8e41;
+    }
+
+    &:checked::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 12px;
+      height: 12px;
+      background: white;
+      border-radius: 3px;
+      transition: background 0.3s ease;
+    }
+
+    &:hover {
+      border-color: #88d3a0;
+    }
+  }
+}
+
 
 #ram-max-numb,
 a {
@@ -19,8 +131,14 @@ a {
 }
 
 #ver {
-  font-size: medium;
-  text-shadow: 0px 0px 1px black;
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffffff;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.5);
+  padding: 5px 10px;
+  border-radius: 10px;
+  margin-top: 10px;
 }
 
 #buttom-menu {
@@ -50,7 +168,7 @@ a {
 
 #right-menu {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
 }
 
 #info-startbutton {
@@ -68,20 +186,18 @@ a {
 #progressbar {
   background-color: rgba(255, 255, 255, 0.151);
   border-radius: 13px;
-  /* (height of inner div) / 2 + padding */
   padding: 1px;
 }
 
 #progress {
   background-color: orange;
   width: 0%;
-  /* Adjust with JavaScript */
   height: 10px;
   border-radius: 10px;
 }
 
 #menu-folder {
-  margin: 5px 5px -35px 5px;
+  margin: 5px 5px 0px 5px;
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -90,11 +206,22 @@ a {
     background-color: #666666cb;
     border: none;
     cursor: pointer;
-    padding: 5px 5px;
+    padding: 8px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s, transform 0.2s;
   }
 
   button:hover {
     background-color: #333333cb;
+    transform: scale(1.1);
+  }
+
+  img {
+    width: 20px;
+    height: 20px;
   }
 }
 
@@ -110,13 +237,13 @@ a {
 }
 
 #start-game:disabled {
-  background-color: #3e8e41; /* Dark Green */
+  background-color: #3e8e41;
   opacity: 0.8;
   cursor: not-allowed;
 }
 
 #start-game:hover {
-  background-color: #3e8e41; /* Dark Green */
+  background-color: #3e8e41;
 }
 
 svg {

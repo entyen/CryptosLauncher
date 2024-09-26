@@ -15,13 +15,6 @@ gfopen.addEventListener("click", async (event) => {
 const username = document.getElementById("username")
 username.value = window.ipc.sendSync("get-username")
 
-//TODO
-const vrPrefix = document.getElementById("vrPrefix")
-vrPrefix.checked = window.ipc.sendSync("get-vrPrefix") || false
-vrPrefix.addEventListener("change", function (event) {
-  return window.ipc.send("set-vrPrefix", event.target.checked)
-})
-
 const rammax = document.getElementById("ram-max")
 const rammaxnumb = document.getElementById("ram-max-numb")
 const avmem = window.ipc.sendSync("available-memory")

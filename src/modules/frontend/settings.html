@@ -5,16 +5,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
+    <link rel="stylesheet" href="./style.css" />
     <title>Settings</title>
 </head>
 
-<body>
-    <label for="modsUrl">Choose Mod Source:</label>
-    <select id="modsUrl">
-        <option value="" disabled selected>Select a source</option>
-        <option value="https://dl.grk.pw">Roma Server</option>
-        <option value="https://yam.grk.pw">Yemshan Server</option>
-    </select>
+<body class="app-settings">
+    <div class="app-settings__selector list">
+        <label for="modsUrl">Choose Mod Source:</label>
+        <select id="modsUrl">
+            <option value="" disabled selected>Select a source</option>
+            <option value="https://dl.grk.pw">Roma Server</option>
+            <option value="https://yam.grk.pw">Yemshan Server</option>
+        </select>
+    </div>
+    <div class="app-settings__vrPrefix list">
+        <a>VrPerfix:</a>
+        <input type="checkbox" id="vrPrefix" />
+    </div>
 </body>
 <script src="./settingsRendrer.js"></script>
 

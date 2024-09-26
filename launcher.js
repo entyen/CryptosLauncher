@@ -89,10 +89,12 @@ ipcMain.on('check-auto-update', () => {
 
         if (isDev) win?.webContents.send("launcher-ready")
         autoUpdater.updateConfigPath = path.join(__dirname, 'app-update.yml')
-        autoUpdater.autoInstallOnAppQuit = true
+        // autoUpdater.autoInstallOnAppQuit = true
+        autoUpdater.autoRunAppAfterInstall = true
 
         autoUpdater.on('update-downloaded', () => {
             win.webContents.send("launcher-update-finished")
+            autoUpdater.quitAndInstall()
         })
         autoUpdater.on('update-not-available', () => {
             win.webContents.send("launcher-ready")
