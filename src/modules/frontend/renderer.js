@@ -68,6 +68,7 @@ window.ipc.receive("set-update-text", (msg) => {
 
 const progress = document.getElementById("progress")
 window.ipc.receive("set-update-progress", (prog) => {
+  console.log(prog + '%')
   progress.style.width = prog + "%"
 })
 
@@ -125,6 +126,6 @@ window.addEventListener('keydown', (event) => {
 });
 
 async function triggerFunction() {
-  const slon = await window.ipc.send("generate-json")
-  alert(`Json file ${slon}`)
+  await window.ipc.send("generate-json")
+  alert(`Json file generated`)
 }
