@@ -83,7 +83,7 @@ async function updateAndLaunch(jre = null) {
                 }, 3000)
             })
 
-            launcher.on('debug', (e) => gameLogger.log(e));
+            launcher.on('debug', (e) => gameLogger.debug(e));
             launcher.on('data', (e) => gameLogger.log(e));
 
             // launcher.on("arguments", () => {
