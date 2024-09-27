@@ -88,14 +88,14 @@ async function updateAndLaunch(jre = null) {
             }
             gameLogger.log("Mod analysis completed successfully.")
 
-            gameLogger.log("Launching the game with options:", opts)
+            gameLogger.log("Launching the game with options")
             launcher.launch(opts).then(() => {
                 setUpdateProgress(100)
                 setUpdateText("Launching Game")
                 setTimeout(() => {
                     main.win.close()
                 }, 3000)
-            })
+            }).catch(e => gameLogger.error(e))
 
             launcher.on('debug', (e) => gameLogger.debug(e))
             launcher.on('data', (e) => gameLogger.log(e))
