@@ -85,7 +85,7 @@ app.on("activate", () => {
 
 ipcMain.on('check-auto-update', () => {
 
-    if (process.platform !== 'darwin') {
+    if (process.platform !== 'darwin' || process.platform !== 'linux') {
 
         if (isDev) win?.webContents.send("launcher-ready")
         autoUpdater.updateConfigPath = path.join(__dirname, 'app-update.yml')
