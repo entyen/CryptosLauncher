@@ -73,9 +73,12 @@ async function updateAndLaunch(jre = null) {
                     min: ConfigManager.getMinRAM()
                 },
                 customArgs: ConfigManager.getVrPrefix() ? [ConfigManager.isVrPrefixEnabled()] : [],
-                javaPath: jre ? path.join(jre, "bin", process.platform === "win32" ? "java.exe" : "java") : null,
                 forge: main.FORGE_VERSION ? path.join(ConfigManager.getGameDirectory(), `forge-${main.MC_VERSION}-${main.FORGE_VERSION}-installer.jar`) : null,
                 server: "multiplayer"
+            };
+
+            if (ConfigManager.getLauncherJava()) {
+                opts.javaPath = jre ? path.join(jre, "bin", process.platform === "win32" ? "java.exe" : "java") : null;
             }
 
             gameLogger.log("Analyzing mods...")

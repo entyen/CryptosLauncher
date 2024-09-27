@@ -58,6 +58,7 @@ const DEFAULT_CONFIG = {
             dataDirectory: dataPath,
             keepLauncherOpen: false,
             vrPrefix: false,
+            useLauncherJava: true,
             modSource: "https://dl.grk.pw"
         }
     },
@@ -254,6 +255,14 @@ exports.setVrPrefix = function (def) {
 
 exports.getVrPrefix = function () {
     return config.settings.launcher.vrPrefix
+}
+
+exports.setLauncherJava = function (def) {
+    return config.settings.launcher.useLauncherJava = def
+}
+
+exports.getLauncherJava = function () {
+    return config.settings.launcher.useLauncherJava
 }
 
 /**

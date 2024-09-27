@@ -24,6 +24,15 @@ exports.initMainIPC = () => {
     configManager.saveConfig()
   })
 
+  ipc.on("get-launcherJava", (event) =>
+    event.returnValue = configManager.getLauncherJava()
+  )
+
+  ipc.on("set-launcherJava", (event, args) => {
+    configManager.setLauncherJava(args)
+    configManager.saveConfig()
+  })
+
   ipc.on("get-vrPrefix", (event) =>
     event.returnValue = configManager.getVrPrefix()
   )
