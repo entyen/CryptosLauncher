@@ -50,12 +50,19 @@ function play() {
 }
 
 async function updateAndLaunch(jre = null) {
+    try {
+        gameLogger.log("Starting the update and launch process...")
 
-    downloadForge().then(async () => {
+        gameLogger.log("Downloading Forge...")
+        await downloadForge()
+        gameLogger.log("Forge downloaded successfully.")
+
+        gameLogger.log("Downloading mods...")
         const modsDownloaded = await downloadMods()
-
         if (modsDownloaded) {
-            const launcher = new Client();
+            gameLogger.log("Mods downloaded successfully.")
+
+            const launcher = new Client()
             let opts = {
                 authorization: Authenticator.getAuth(ConfigManager.getUsername()),
                 root: ConfigManager.getGameDirectory(),
@@ -72,31 +79,35 @@ async function updateAndLaunch(jre = null) {
                 forge: main.FORGE_VERSION ? path.join(ConfigManager.getGameDirectory(), `forge-${main.MC_VERSION}-${main.FORGE_VERSION}-installer.jar`) : null,
                 server: "multiplayer"
             }
+
+            gameLogger.log("Analyzing mods...")
             const analyseMod = await analyseMods()
-            if (!analyseMod) return updateError('Дима пошел нахуй!!!')
-            //GAME LAUNCH
+            if (!analyseMod) {
+                gameLogger.error("Mod analysis failed. Stopping the launch process.")
+                return updateError('Дима пошел нахуй!!!')
+            }
+            gameLogger.log("Mod analysis completed successfully.")
+
+            gameLogger.log("Launching the game with options:", opts)
             launcher.launch(opts).then(() => {
                 setUpdateProgress(100)
-                setUpdateText("LaunchingGame");
+                setUpdateText("Launching Game")
                 setTimeout(() => {
                     main.win.close()
                 }, 3000)
             })
 
-            launcher.on('debug', (e) => gameLogger.debug(e));
-            launcher.on('data', (e) => gameLogger.log(e));
-
-            // launcher.on("arguments", () => {
-            //     setUpdateProgress(100)
-            //     setUpdateText("LaunchingGame");
-            //     analyseMods();
-            //     setTimeout(() => {
-            //         main.win.close()
-            //     }, 3000)
-            // })
+            launcher.on('debug', (e) => gameLogger.debug(e))
+            launcher.on('data', (e) => gameLogger.log(e))
+        } else {
+            gameLogger.error("Mods were not downloaded. Stopping the launch process.")
         }
-    })
+    } catch (error) {
+        gameLogger.error(`Error during update and launch process: ${error.message}`)
+        updateError("LaunchError: " + error.message)
+    }
 }
+
 
 function checkJavaInstallation() {
     return new Promise((resolve, reject) => {
@@ -293,91 +304,137 @@ async function downloadMods() {
     if (MODS_URL) {
         try {
             setUpdateText("Checking mods")
-            gameLogger.log("Downloading Mods...")
+            gameLogger.log("Checking Mods...")
+
             const modsDir = path.join(ConfigManager.getGameDirectory(), "mods")
+            gameLogger.log(`Mods directory: ${modsDir}`)
+
             if (!fs.existsSync(modsDir)) {
+                gameLogger.log(`Mods directory does not exist. Creating...`)
                 fs.mkdirSync(modsDir)
+            } else {
+                gameLogger.log(`Mods directory already exists`)
             }
 
+            gameLogger.log(`Fetching mods list from ${MODS_URL}`)
             const response = await Axios.get(MODS_URL)
+            gameLogger.log(`Received mods list. Status: ${response.statusText}`)
 
             for (let i = 0; i < response.data.mods.length; i++) {
                 const modFile = path.join(modsDir, response.data.mods[i].name)
+                gameLogger.log(`Checking mod: ${response.data.mods[i].name} at ${modFile}`)
+
                 if (fs.existsSync(modFile)) {
+                    gameLogger.log(`Mod file ${modFile} exists. Verifying SHA1...`)
                     const modFileContent = fs.readFileSync(modFile)
                     let modSha1 = crypto.createHash("sha1").update(modFileContent).digest("hex")
+                    gameLogger.log(`Current SHA1: ${modSha1}, Expected SHA1: ${response.data.mods[i].sha1}`)
+
                     if (modSha1 !== response.data.mods[i].sha1) {
+                        gameLogger.log(`SHA1 mismatch for ${modFile}. Deleting file...`)
                         fs.unlinkSync(modFile)
                         totalModsSize += response.data.mods[i].size
-                    }
-                    else {
+                    } else {
+                        gameLogger.log(`SHA1 matches for ${modFile}. Skipping download.`)
                         continue
                     }
-                }
-                else {
+                } else {
+                    gameLogger.log(`Mod file ${modFile} does not exist. Will download.`)
                     totalModsSize += response.data.mods[i].size
                 }
             }
 
             for (let i = 0; i < response.data.mods.length; i++) {
                 const modFile = path.join(modsDir, response.data.mods[i].name)
+
                 if (fs.existsSync(modFile)) {
+                    gameLogger.log(`Verifying existing mod file: ${modFile}`)
                     const modFileContent = fs.readFileSync(modFile)
                     let modSha1 = crypto.createHash("sha1").update(modFileContent).digest("hex")
+
                     if (modSha1 !== response.data.mods[i].sha1) {
+                        gameLogger.log(`SHA1 mismatch for ${modFile}. Deleting and re-downloading...`)
                         fs.unlinkSync(modFile)
                         await downloadMod(response.data.mods[i].downloadURL, modFile, response.data.mods[i].size)
                         gameLogger.log(`${response.data.mods[i].name} was successfully downloaded!`)
-                    }
-                    else {
+                    } else {
+                        gameLogger.log(`Mod ${modFile} is up to date. Skipping download.`)
                         continue
                     }
-                }
-                else {
+                } else {
+                    gameLogger.log(`Downloading mod ${response.data.mods[i].name}...`)
                     await downloadMod(response.data.mods[i].downloadURL, modFile, response.data.mods[i].size)
                     gameLogger.log(`${response.data.mods[i].name} was successfully downloaded!`)
                 }
             }
+            gameLogger.log(`All mods have been processed successfully.`)
             return true
-        }
-        catch (err) {
-            gameLogger.error(err?.message)
+        } catch (err) {
+            gameLogger.error(`Error during mods download: ${err?.message}`)
             updateError("ModsError: " + err?.message)
             return false
         }
+    } else {
+        gameLogger.error("Mods URL is not defined.")
+        return false
     }
-
 }
 
 async function analyseMods() {
     try {
+        gameLogger.log("Starting mod analysis...")
+
         const getModsUrl = ConfigManager.getModSource()
         const MODS_URL = getModsUrl ? `${getModsUrl}/mine/mods.json` : main.MODS_URL
+        gameLogger.log(`Mods URL: ${MODS_URL}`)
 
         const modsDir = path.join(ConfigManager.getGameDirectory(), "mods")
+        gameLogger.log(`Mods directory: ${modsDir}`)
+
         if (!fs.existsSync(modsDir)) {
+            gameLogger.log(`Mods directory does not exist. Creating...`)
             fs.mkdirSync(modsDir)
+        } else {
+            gameLogger.log(`Mods directory already exists.`)
         }
+
+        gameLogger.log(`Fetching mods from ${MODS_URL}`)
         const response = await Axios.get(MODS_URL)
+        gameLogger.log(`Mods list fetched successfully. Status: ${response.statusText}`)
+
+        gameLogger.log(`Analysing mods in directory: ${modsDir}`)
         fs.readdirSync(modsDir).forEach(file => {
-            const jarFileRegex = /\.jar$/i;
-            if(!jarFileRegex.test(file)) return
+            const jarFileRegex = /\.jar$/i
+            if (!jarFileRegex.test(file)) {
+                gameLogger.log(`Skipping non-jar file: ${file}`)
+                return
+            }
+
+            gameLogger.log(`Checking mod file: ${file}`)
             let sha1Array = []
+
             for (let i = 0; i < response.data.mods.length; i++) {
                 sha1Array.push(response.data.mods[i].sha1)
             }
+
             const modFileContent = fs.readFileSync(path.join(modsDir, file))
             let modSha1 = crypto.createHash("sha1").update(modFileContent).digest("hex")
+            gameLogger.log(`Current SHA1: ${modSha1}`)
+
             if (!sha1Array.includes(modSha1)) {
+                gameLogger.log(`Mod file ${file} is not in the mod list. Deleting...`)
                 fs.unlinkSync(path.join(modsDir, file))
+                gameLogger.log(`Mod file ${file} deleted.`)
+            } else {
+                gameLogger.log(`Mod file ${file} is valid. Keeping.`)
             }
         })
 
+        gameLogger.log("Mod analysis completed successfully.")
         return true
 
-    }
-    catch (err) {
-        gameLogger.error(err.message)
+    } catch (err) {
+        gameLogger.error(`Error during mod analysis: ${err.message}`)
         updateError("ModsError: " + err.message)
     }
 }
