@@ -1,6 +1,3 @@
-const gameLogger = require('./logger')('%c[GameLogger]', 'color: #000668; font-weight: bold')
-const javaLogger = require('./logger')('%c[JavaLogger]', 'color: #000668; font-weight: bold')
-
 const { Client, Authenticator } = require('minecraft-launcher-core');
 const ipc = require("electron").ipcMain
 const path = require("path")
@@ -11,6 +8,11 @@ const crypto = require("crypto")
 
 const ConfigManager = require("./configmanager")
 const main = require('../../../launcher')
+
+const gameLogger = require('./logger')('%c[GameLogger]', 'color: #000668; font-weight: bold')
+const javaLogger = require('./logger')('%c[JavaLogger]', 'color: #000668; font-weight: bold')
+gameLogger.setWindow(main)
+javaLogger.setWindow(main)
 
 exports.init = () => {
     ipc.on("play", () => play())

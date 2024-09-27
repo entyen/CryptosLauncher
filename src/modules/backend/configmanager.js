@@ -18,6 +18,7 @@ if (process.platform == 'darwin') {
 const launcherDir = process.env.CONFIG_DIRECT_PATH || app.getPath("userData")
 
 const logger = require('./logger')('%c[ConfigManager]', 'color: #a02d2a; font-weight: bold')
+logger.setWindow(main)
 
 /**
  * Retrieve the absolute path of the launcher directory.

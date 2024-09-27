@@ -61,7 +61,6 @@ window.ipc.receive("set-update-text", (msg) => {
 
 const progress = document.getElementById("progress")
 window.ipc.receive("set-update-progress", (prog) => {
-  console.log(prog + '%')
   progress.style.width = prog + "%"
 })
 
@@ -122,3 +121,11 @@ async function triggerFunction() {
   await window.ipc.send("generate-json")
   alert(`Json file generated`)
 }
+
+window.ipc.receive("logger", ({ logType, message }) => {
+    if (typeof message[0] === 'string' && message[0].startsWith('%c')) {
+        console[logType](message[0], message[1], ...message.slice(2));
+    } else {
+        console[logType](...message);
+    }
+})
