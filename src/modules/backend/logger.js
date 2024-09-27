@@ -11,7 +11,7 @@ class Logger {
     }
 
     sendLogToWindow(logType, message) {
-        if (this.win?.win && this.win?.win?.webContents) {
+        if (this.win?.win && !this.win.win.isDestroyed() && this.win.win.webContents) {
             if (message[0].startsWith('%c')) {
                 const formattedMessage = [message[0], message[1], ...message.slice(2)];
                 this.win.win.webContents.send("logger", { logType, message: formattedMessage });

@@ -94,7 +94,7 @@ ipcMain.on('check-auto-update', () => {
 
         autoUpdater.on('update-downloaded', () => {
             win.webContents.send("launcher-update-finished")
-            autoUpdater.quitAndInstall()
+            autoUpdater.quitAndInstall(true, true)
         })
         autoUpdater.on('update-not-available', () => {
             win.webContents.send("launcher-ready")

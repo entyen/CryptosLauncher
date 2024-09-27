@@ -333,7 +333,6 @@ async function downloadMods() {
 
             for (let i = 0; i < response.data.mods.length; i++) {
                 const modFile = path.join(modsDir, response.data.mods[i].name)
-                setUpdateProgress((i / response.data.mods.length) * 100)
 
                 if (fs.existsSync(modFile)) {
                     const modFileContent = fs.readFileSync(modFile)
