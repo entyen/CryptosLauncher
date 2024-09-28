@@ -32,6 +32,8 @@ mac:
       arch:
         - "x64"
         - "arm64"
+  publish:
+    provider: github
   artifactName: "${productName}-setup-${version}-${arch}.${ext}"
   category: "public.app-category.games"
 
@@ -40,6 +42,8 @@ linux:
   target:
     - AppImage
     - pacman
+  publish:
+    provider: github
   maintainer: "Entyen"
   vendor: "Entyen"
   synopsis: "Modded Minecraft Launcher"
