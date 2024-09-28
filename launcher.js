@@ -85,34 +85,33 @@ app.on("activate", () => {
 
 ipcMain.on('check-auto-update', () => {
 
-    if (isDev) return win?.webContents.send("launcher-ready")
-    if (process.platform !== 'darwin' || process.platform !== 'linux') {
-        autoUpdater.updateConfigPath = path.join(__dirname, 'app-update.yml')
-        autoUpdater.autoInstallOnAppQuit = true
-        autoUpdater.autoRunAppAfterInstall = true
-
-        autoUpdater.on('update-downloaded', () => {
-            win.webContents.send("launcher-update-finished")
-            autoUpdater.quitAndInstall(true, true)
-        })
-        autoUpdater.on('update-not-available', () => {
-            win.webContents.send("launcher-ready")
-        })
-        autoUpdater.on('error', (err) => {
-            win.webContents.send("set-update-text", err)
-        })
-        autoUpdater.on('download-progress', (progress) => {
-            win.webContents.send("set-update-text", "Self update...")
-            win.webContents.send("set-update-progress", progress)
-        })
-        autoUpdater.checkForUpdates().catch(err => {
-            win.webContents.send("set-update-text", err)
-        })
-
+    // if (isDev) return win?.webContents.send("launcher-ready")
+    if (process.platform == 'darwin' || process.platform == 'linux') {
+        return win.webContents.send("launcher-ready")
     }
-    else {
+
+    autoUpdater.updateConfigPath = path.join(__dirname, 'app-update.yml')
+    autoUpdater.autoInstallOnAppQuit = true
+    autoUpdater.autoRunAppAfterInstall = true
+
+    autoUpdater.on('update-downloaded', () => {
+        win.webContents.send("launcher-update-finished")
+        autoUpdater.quitAndInstall(true, true)
+    })
+    autoUpdater.on('update-not-available', () => {
         win.webContents.send("launcher-ready")
-    }
+    })
+    autoUpdater.on('error', (err) => {
+        win.webContents.send("set-update-text", err)
+    })
+    autoUpdater.on('download-progress', (progress) => {
+        win.webContents.send("set-update-text", "Self update...")
+        win.webContents.send("set-update-progress", progress)
+    })
+    autoUpdater.checkForUpdates().catch(err => {
+        win.webContents.send("set-update-text", err)
+    })
+
 })
 
 // exports.LAUNCHER_CONFIG = "./config.json"
