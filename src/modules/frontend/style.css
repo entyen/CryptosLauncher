@@ -14,7 +14,7 @@ html {
 }
 
 .app-settings {
-  background: linear-gradient(135deg, #3e8e41 30%, #2d6a30 100%);
+  background: linear-gradient(135deg, #3e8e41, #2d6a30, #1a4d20);
   background-size: cover;
   background-position: center center;
   color: #fff;
@@ -184,16 +184,21 @@ a {
 }
 
 #progressbar {
-  background-color: rgba(255, 255, 255, 0.151);
+  background-color: rgba(255, 255, 255, 0.2);
   border-radius: 13px;
   padding: 1px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  height: 15px;
+  width: 100%;
+  overflow: hidden;
 }
 
 #progress {
-  background-color: orange;
+  background: linear-gradient(90deg, #d0ff00, #7bff00);
   width: 0%;
-  height: 10px;
-  border-radius: 10px;
+  height: 100%;
+  border-radius: 12px;
+  transition: width 0.5s ease;
 }
 
 #menu-folder {
@@ -206,7 +211,7 @@ a {
     background-color: #666666cb;
     border: none;
     cursor: pointer;
-    padding: 8px;
+    padding: 2px;
     border-radius: 10px;
     display: flex;
     align-items: center;
@@ -215,13 +220,13 @@ a {
   }
 
   button:hover {
-    background-color: #333333cb;
+    background-color: #921010cb;
     transform: scale(1.1);
   }
 
   img {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
   }
 }
 
@@ -263,4 +268,15 @@ svg:hover {
 #errorInfo {
   color: red;
   background-color: black;
+}
+
+input,
+button {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  border-radius: 8px;
+}
+
+button:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
 }

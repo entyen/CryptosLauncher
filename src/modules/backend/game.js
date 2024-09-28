@@ -21,9 +21,11 @@ exports.init = () => {
 function setUpdateText(message) {
     main.win.webContents.send("set-update-text", message)
 }
+
 function setUpdateProgress(progress) {
-    main.win.webContents.send("set-update-progress", progress)
+    main.win.webContents.send("set-update-progress", progress.toFixed(0))
 }
+
 function updateError(message) {
     main.win.webContents.send("launcher-update-error", message)
 }
@@ -55,9 +57,13 @@ async function updateAndLaunch(jre = null) {
 
         await downloadForge()
 
-        gameLogger.log("Downloading mods...")
-        const modsDownloaded = await downloadMods()
-        if (modsDownloaded) {
+        gameLogger.log("Check mods...")
+        const modsDownloaded = await checkMods()
+
+        gameLogger.log("Analyzing mods...")
+        const analyseMod = await analyseMods()
+
+        if (modsDownloaded && analyseMod) {
             gameLogger.log("Mods downloaded successfully.")
 
             const launcher = new Client()
@@ -81,14 +87,7 @@ async function updateAndLaunch(jre = null) {
                 opts.javaPath = jre ? path.join(jre, "bin", process.platform === "win32" ? "java.exe" : "java") : null;
             }
 
-            gameLogger.log("Analyzing mods...")
-            const analyseMod = await analyseMods()
-            if (!analyseMod) {
-                gameLogger.error("Mod analysis failed. Stopping the launch process.")
-                return updateError('Дима пошел нахуй!!!')
-            }
-
-            gameLogger.log("Launching the game with options")
+            gameLogger.log("Launching the game")
             launcher.launch(opts).then(() => {
                 setUpdateProgress(100)
                 setUpdateText("Launching Game")
@@ -100,7 +99,7 @@ async function updateAndLaunch(jre = null) {
             launcher.on('debug', (e) => gameLogger.debug(e))
             launcher.on('data', (e) => gameLogger.log(e))
         } else {
-            gameLogger.error("Mods were not downloaded. Stopping the launch process.")
+            gameLogger.error("Mods were not downloaded or analysed. Stopping the launch process.")
         }
     } catch (error) {
         gameLogger.error(`Error during update and launch process: ${error.message}`)
@@ -143,6 +142,7 @@ function checkJavaInstallation() {
         })
         spawn.stderr.on("data", function (data) {
             if (process.platform == "darwin" && !!data) {
+                setUpdateProgress(100)
                 return resolve()
             }
             if (data.toString().includes("64") && data.toString().includes("17.0")) {
@@ -192,7 +192,7 @@ async function downloadJava(fileURL, targetPath, jrePath) {
             receivedBytes += chunk.length
             setUpdateText("DownloadingJava")
 
-            setUpdateProgress((100.0 * receivedBytes / totalLength).toFixed(0))
+            setUpdateProgress((100.0 * receivedBytes / totalLength))
         })
         data.pipe(writer)
         writer.on('error', err => {
@@ -257,7 +257,7 @@ function downloadForge() {
                     receivedBytes += chunk.length
                     setUpdateText("DownloadingForge")
 
-                    setUpdateProgress((100.0 * receivedBytes / totalLength).toFixed(0))
+                    setUpdateProgress((100.0 * receivedBytes / totalLength))
                 })
                 data.pipe(writer)
                 writer.on('error', err => {
@@ -280,6 +280,7 @@ function downloadForge() {
 
             }
             else {
+                setUpdateText('Forge installed')
                 gameLogger.log("Forge installer is already installed")
                 resolve()
             }
@@ -298,12 +299,13 @@ let totalModsSize = 0
 let currentModsSize = 0
 
 
-async function downloadMods() {
+async function checkMods() {
     const getModsUrl = ConfigManager.getModSource()
     const MODS_URL = getModsUrl ? `${getModsUrl}/mine/mods.json` : main.MODS_URL
     if (MODS_URL) {
         try {
             setUpdateText("Checking mods")
+            setUpdateProgress(0)
 
             const modsDir = path.join(ConfigManager.getGameDirectory(), "mods")
 
@@ -391,7 +393,7 @@ async function analyseMods() {
 
             const modFileContent = fs.readFileSync(path.join(modsDir, file))
             let modSha1 = crypto.createHash("sha1").update(modFileContent).digest("hex")
-            setUpdateProgress(Math.floor((index / sha1Array.length) * 100))
+            setUpdateProgress((index / sha1Array.length) * 100)
 
             if (!sha1Array.includes(modSha1)) {
                 fs.unlinkSync(path.join(modsDir, file))
@@ -404,6 +406,7 @@ async function analyseMods() {
     } catch (err) {
         gameLogger.error(`Error during mod analysis: ${err.message}`)
         updateError("ModsError: " + err.message)
+        return false
     }
 }
 
@@ -421,7 +424,7 @@ async function downloadMod(fileURL, targetPath, modSize) {
             data.on('data', (chunk) => {
                 currentModsSize += chunk.length
                 setUpdateText("DownloadingMods")
-                setUpdateProgress((100 * currentModsSize / totalModsSize).toFixed(0))
+                setUpdateProgress((100 * currentModsSize / totalModsSize))
             })
             data.pipe(writer)
             writer.on('error', err => {

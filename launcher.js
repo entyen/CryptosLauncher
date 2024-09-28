@@ -85,7 +85,7 @@ app.on("activate", () => {
 
 ipcMain.on('check-auto-update', () => {
 
-    // if (isDev) return win?.webContents.send("launcher-ready")
+    if (isDev) return win?.webContents.send("launcher-ready")
     if (process.platform == 'darwin' || process.platform == 'linux') {
         return win.webContents.send("launcher-ready")
     }
