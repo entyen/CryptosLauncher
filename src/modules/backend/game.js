@@ -316,7 +316,7 @@ async function checkMods() {
             const response = await Axios.get(MODS_URL)
 
             for (let i = 0; i < response.data.mods.length; i++) {
-                const modFile = path.join(modsDir, response.data.mods[i].name)
+                const modFile = path.join(modsDir, response.data.mods[i].file)
 
                 if (fs.existsSync(modFile)) {
                     const modFileContent = fs.readFileSync(modFile)
@@ -334,7 +334,7 @@ async function checkMods() {
             }
 
             for (let i = 0; i < response.data.mods.length; i++) {
-                const modFile = path.join(modsDir, response.data.mods[i].name)
+                const modFile = path.join(modsDir, response.data.mods[i].file)
 
                 if (fs.existsSync(modFile)) {
                     const modFileContent = fs.readFileSync(modFile)
