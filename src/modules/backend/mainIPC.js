@@ -66,8 +66,13 @@ exports.initMainIPC = () => {
     event.returnValue = configManager.getModSource()
   })
 
-  ipc.on('generate-json', () => {
-    GenerateModsJson()
-    return 'Generated'
-  })
+  ipc.on('generate-json', async (event) => {
+    try {
+      const res = await GenerateModsJson();
+      event.returnValue = res
+    } catch (error) {
+      console.error(error);
+      event.returnValue = error
+    }
+  });
 }

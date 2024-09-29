@@ -8,27 +8,42 @@ const modsDir = path.join(sysRoot, "./.minecraft", "mods")
 
 let modFiles = { mods: [] }
 
-function GenerateModsJson() {
-  const MODS_URL = ConfigManager.getModSource()
-  fs.readdir(modsDir, (err, files) => {
-    files.forEach(name => {
-      const modFile = path.join(modsDir, name)
-      const modFileContent = fs.readFileSync(modFile)
-      let sha1 = crypto.createHash("sha1").update(modFileContent).digest("hex")
-      let downloadURL = `${MODS_URL}/mine/mods/${name}`
-      let size = fs.statSync(modFile).size
-      modFiles.mods.push({ name, sha1, downloadURL, size })
-    })
-    const modFilesJSON = JSON.stringify(modFiles);
-    fs.writeFile('./mods.json', modFilesJSON, err => {
-      if (err) {
-        console.log('Error writing file', err)
-      } else {
-        console.log('Successfully wrote file')
-      }
-    })
-  }
-  )
+async function GenerateModsJson() {
+    return new Promise((resolve, reject) => {
+        const MODS_URL = ConfigManager.getModSource()
+        
+        // Чтение директории
+        fs.readdir(modsDir, (err, files) => {
+            if (err) {
+                reject(`Error reading mods directory: ${err}`);
+                return;
+            }
+
+            // Обработка каждого файла
+            files.forEach(file => {
+                const jarFileRegex = /\.jar$/i;
+                if (!jarFileRegex.test(file)) return;
+
+                const modFile = path.join(modsDir, file);
+                const modFileContent = fs.readFileSync(modFile);
+                let sha1 = crypto.createHash("sha1").update(modFileContent).digest("hex");
+                let downloadURL = `${MODS_URL}/mine/mods/${file}`;
+                let size = fs.statSync(modFile).size;
+
+                modFiles.mods.push({ file, sha1, downloadURL, size });
+            });
+
+            // Запись результата в JSON файл
+            const modFilesJSON = JSON.stringify(modFiles);
+            fs.writeFile('./mods.json', modFilesJSON, err => {
+                if (err) {
+                    reject(`Error writing file: ${err}`);
+                } else {
+                    resolve("Successfully wrote mods.json");
+                }
+            });
+        });
+    });
 }
 
-module.exports = GenerateModsJson
+module.exports = GenerateModsJson;

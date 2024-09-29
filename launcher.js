@@ -12,6 +12,7 @@ autoUpdater.logger = log
 
 let win
 let settingsWindow
+let adminWindow
 
 const createWindow = () => {
     win = new BrowserWindow({
@@ -38,6 +39,8 @@ function createSettingsWindow() {
         parent: win,
         modal: true,
         resizable: false,
+        movable: false,
+        minimizable: false,
         webPreferences: {
             contextIsolation: true,
             preload: path.join(__dirname, 'preload.js'),
@@ -56,11 +59,46 @@ function createSettingsWindow() {
     })
 }
 
+function createAdminWindow() {
+    adminWindow = new BrowserWindow({
+        width: 400,
+        height: 300,
+        parent: win,
+        modal: true,
+        resizable: false,
+        movable: false,
+        minimizable: false,
+        webPreferences: {
+            contextIsolation: true,
+            preload: path.join(__dirname, 'preload.js'),
+        },
+        autoHideMenuBar: true,
+        title: 'Admin Page',
+        icon: path.join(__dirname, "images", "logo.png")
+    })
+
+    adminWindow.loadFile('./src/modules/frontend/admin.html')
+
+    exports.admin = adminWindow
+
+    adminWindow.on('closed', () => {
+        adminWindow = null
+    })
+}
+
 ipcMain.on('open-settings', (event) => {
     if (!settingsWindow) {
         createSettingsWindow()
     } else {
         settingsWindow.show()
+    }
+})
+
+ipcMain.on('open-admin-tools', (event) => {
+    if (!adminWindow) {
+        createAdminWindow()
+    } else {
+        adminWindow.show()
     }
 })
 

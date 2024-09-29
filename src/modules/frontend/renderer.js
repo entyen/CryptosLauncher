@@ -100,7 +100,7 @@ window.ipc.receive("launcher-update-error", (err) => {
 })
 
 let keySequence = [];
-const targetSequence = ['y', 'e', 'm'];
+const targetSequence = ['y', 'a', 'm'];
 const maxInterval = 50;
 
 window.addEventListener('keydown', (event) => {
@@ -118,8 +118,7 @@ window.addEventListener('keydown', (event) => {
 });
 
 async function triggerFunction() {
-  await window.ipc.send("generate-json")
-  alert(`Json file generated`)
+  await window.ipc.send("open-admin-tools")
 }
 
 window.ipc.receive("logger", ({ logType, message }) => {
