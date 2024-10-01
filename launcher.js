@@ -121,36 +121,53 @@ app.on("activate", () => {
     }
 })
 
-ipcMain.on('check-auto-update', () => {
+// Выбор канала обновлений (можно сохранять это в конфигурации)
+let updateChannel = ConfigManager.getUpdateChannel() || 'latest';
+autoUpdater.channel = updateChannel;
 
-    if (isDev) return win?.webContents.send("launcher-ready")
-    if (process.platform == 'darwin' || process.platform == 'linux') {
-        return win.webContents.send("launcher-ready")
+ipcMain.on('check-auto-update', async () => {
+    try {
+        if (isDev) {
+            return win?.webContents.send("launcher-ready");
+        }
+
+        if (process.platform === 'darwin' || process.platform === 'linux') {
+            return win.webContents.send("launcher-ready");
+        }
+
+        autoUpdater.updateConfigPath = path.join(__dirname, 'app-update.yml');
+        autoUpdater.autoInstallOnAppQuit = true;
+        autoUpdater.autoRunAppAfterInstall = true;
+
+        autoUpdater.on('update-downloaded', () => {
+            log.info("Update downloaded, preparing to quit and install...");
+            win.webContents.send("launcher-update-finished");
+            autoUpdater.quitAndInstall(true, true);
+        });
+
+        autoUpdater.on('update-not-available', () => {
+            log.info("No updates available.");
+            win.webContents.send("launcher-ready");
+        });
+
+        autoUpdater.on('error', (err) => {
+            log.error(`Update error: ${err.message}`);
+            win.webContents.send("set-update-text", `Error: ${err.message}`);
+        });
+
+        autoUpdater.on('download-progress', (progress) => {
+            log.info(`Download progress: ${progress.percent}%`);
+            win.webContents.send("set-update-text", "Self update...");
+            win.webContents.send("set-update-progress", progress.percent);
+        });
+
+        await autoUpdater.checkForUpdates();
+
+    } catch (err) {
+        log.error(`Failed to check for updates: ${err.message}`);
+        win.webContents.send("set-update-text", `Error checking updates: ${err.message}`);
     }
-
-    autoUpdater.updateConfigPath = path.join(__dirname, 'app-update.yml')
-    autoUpdater.autoInstallOnAppQuit = true
-    autoUpdater.autoRunAppAfterInstall = true
-
-    autoUpdater.on('update-downloaded', () => {
-        win.webContents.send("launcher-update-finished")
-        autoUpdater.quitAndInstall(true, true)
-    })
-    autoUpdater.on('update-not-available', () => {
-        win.webContents.send("launcher-ready")
-    })
-    autoUpdater.on('error', (err) => {
-        win.webContents.send("set-update-text", err)
-    })
-    autoUpdater.on('download-progress', (progress) => {
-        win.webContents.send("set-update-text", "Self update...")
-        win.webContents.send("set-update-progress", progress)
-    })
-    autoUpdater.checkForUpdates().catch(err => {
-        win.webContents.send("set-update-text", err)
-    })
-
-})
+});
 
 // exports.LAUNCHER_CONFIG = "./config.json"
 exports.LAUNCHER_NAME = "MC Launcher"

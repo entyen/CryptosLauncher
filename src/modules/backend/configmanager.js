@@ -59,7 +59,8 @@ const DEFAULT_CONFIG = {
             keepLauncherOpen: false,
             vrPrefix: false,
             useLauncherJava: true,
-            modSource: "https://dl.grk.pw"
+            modSource: "https://dl.grk.pw",
+            updateChannel: "latest"
         }
     },
     currentAccount: null,
@@ -309,3 +310,7 @@ exports.setModSource = function (url) {
  * @returns {string} mod url.
  */
 exports.getModSource = () => config?.settings?.launcher?.modSource
+
+exports.getUpdateChannel = () => {
+    return config.settings.updateChannel
+}
