@@ -312,5 +312,5 @@ exports.setModSource = function (url) {
 exports.getModSource = () => config?.settings?.launcher?.modSource
 
 exports.getUpdateChannel = () => {
-    return config.settings.updateChannel
+    return config.settings.launcher.updateChannel
 }
