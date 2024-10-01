@@ -53,60 +53,75 @@ function play() {
 
 async function updateAndLaunch(jre = null) {
     try {
-        gameLogger.log("Starting the update and launch process...")
+        gameLogger.log("Starting the update and launch process...");
 
-        await downloadForge()
+        // Сначала проверяем Forge
+        await downloadForge();
 
-        gameLogger.log("Check mods...")
-        const modsDownloaded = await checkMods()
+        // Проверяем и загружаем моды
+        gameLogger.log("Checking mods...");
+        const modsDownloaded = await checkMods();
 
-        gameLogger.log("Analyzing mods...")
-        const analyseMod = await analyseMods()
+        // Анализ модов
+        gameLogger.log("Analyzing mods...");
+        const modsAnalyzed = await analyseMods();
 
-        if (modsDownloaded && analyseMod) {
-            gameLogger.log("Mods downloaded successfully.")
+        // Если моды успешно загружены и проанализированы, продолжаем
+        if (modsDownloaded && modsAnalyzed) {
+            gameLogger.log("Mods downloaded and analyzed successfully.");
 
-            const launcher = new Client()
-            let opts = {
-                authorization: await Authenticator.getAuth(ConfigManager.getUsername()),
-                root: ConfigManager.getGameDirectory(),
-                version: {
-                    number: main.MC_VERSION,
-                    type: "release"
-                },
-                memory: {
-                    max: ConfigManager.getMaxRAM(),
-                    min: ConfigManager.getMinRAM()
-                },
-                customArgs: ConfigManager.getVrPrefix() ? [ConfigManager.isVrPrefixEnabled()] : [],
-                forge: main.FORGE_VERSION ? path.join(ConfigManager.getGameDirectory(), `forge-${main.MC_VERSION}-${main.FORGE_VERSION}-installer.jar`) : null,
-                server: "multiplayer"
-            };
+            // Формирование опций для запуска
+            const opts = await createLaunchOptions(jre);
 
-            if (ConfigManager.getLauncherJava()) {
-                opts.javaPath = jre ? path.join(jre, "bin", process.platform === "win32" ? "java.exe" : "java") : null;
-            }
+            const launcher = new Client();
+            gameLogger.log("Launching the game...");
 
-            gameLogger.log("Launching the game")
-            launcher.launch(opts).then(() => {
-                setUpdateProgress(100)
-                setUpdateText("Launching Game")
-                setTimeout(() => {
-                    main.win.close()
-                }, 3000)
-            }).catch(e => gameLogger.error(e))
+            // Асинхронный запуск игры с ожиданием
+            await launcher.launch(opts);
+            setUpdateProgress(100);
+            setUpdateText("Launching Game");
 
-            launcher.on('debug', (e) => gameLogger.debug(e))
-            launcher.on('data', (e) => gameLogger.log(e))
+            // Закрытие окна после небольшого ожидания
+            setTimeout(() => {
+                main.win.close();
+            }, 3000);
+
+            // Логи на случай отладки
+            launcher.on('debug', (e) => gameLogger.debug(e));
+            launcher.on('data', (e) => gameLogger.log(e));
         } else {
-            gameLogger.error("Mods were not downloaded or analysed. Stopping the launch process.")
+            gameLogger.error("Mods were not downloaded or analyzed. Stopping the launch process.");
         }
     } catch (error) {
-        gameLogger.error(`Error during update and launch process: ${error.message}`)
-        updateError("LaunchError: " + error.message)
+        gameLogger.error(`Error during update and launch process: ${error.message}`);
+        updateError("LaunchError: " + error.message);
     }
 }
 
+// Вспомогательная функция для формирования опций
+async function createLaunchOptions(jre) {
+    let opts = {
+        authorization: await Authenticator.getAuth(ConfigManager.getUsername()),
+        root: ConfigManager.getGameDirectory(),
+        version: {
+            number: main.MC_VERSION,
+            type: "release"
+        },
+        memory: {
+            max: ConfigManager.getMaxRAM(),
+            min: ConfigManager.getMinRAM()
+        },
+        customArgs: ConfigManager.getVrPrefix() ? [ConfigManager.isVrPrefixEnabled()] : [],
+        forge: main.FORGE_VERSION ? path.join(ConfigManager.getGameDirectory(), `forge-${main.MC_VERSION}-${main.FORGE_VERSION}-installer.jar`) : null,
+        server: "multiplayer"
+    };
+
+    if (ConfigManager.getLauncherJava()) {
+        opts.javaPath = jre ? path.join(jre, "bin", process.platform === "win32" ? "java.exe" : "java") : null;
+    }
+
+    return opts;
+}
 
 function checkJavaInstallation() {
     return new Promise((resolve, reject) => {
@@ -230,69 +245,81 @@ async function downloadJava(fileURL, targetPath, jrePath) {
     }
 }
 
-function downloadForge() {
-    return new Promise(async (resolve, reject) => {
+async function downloadForge(retries = 3) {
+    try {
+        if (!main.FORGE_VERSION) {
+            return;
+        }
+
+        setUpdateText("Checking Forge");
+        gameLogger.log("Checking Forge...");
+
+        const forgeInstallerFile = path.join(ConfigManager.getGameDirectory(), `forge-${main.MC_VERSION}-${main.FORGE_VERSION}-installer.jar`);
+        const forgeInstallerURL = `https://maven.minecraftforge.net/net/minecraftforge/forge/${main.MC_VERSION}-${main.FORGE_VERSION}/forge-${main.MC_VERSION}-${main.FORGE_VERSION}-installer.jar`;
+
+        // Проверяем наличие файла Forge
+        const res = await Axios.head(forgeInstallerURL);
+        const totalLength = parseInt(res.headers["content-length"], 10);
 
         try {
-
-            if (!main.FORGE_VERSION) {
-                resolve()
+            const stats = await fs.promises.stat(forgeInstallerFile);
+            if (stats.size === totalLength) {
+                setUpdateText('Forge installed');
+                gameLogger.log("Forge installer is already installed");
+                return;
             }
-            setUpdateText("Checking Forge")
-            gameLogger.log("Checking Forge...")
-            const forgeInstallerFile = path.join(ConfigManager.getGameDirectory(), `forge-${main.MC_VERSION}-${main.FORGE_VERSION}-installer.jar`)
-            const forgeInstallerURL = `https://maven.minecraftforge.net/net/minecraftforge/forge/${main.MC_VERSION}-${main.FORGE_VERSION}/forge-${main.MC_VERSION}-${main.FORGE_VERSION}-installer.jar`
-
-            let res = await Axios.head(forgeInstallerURL)
-            if (!fs.existsSync(forgeInstallerFile) || fs.statSync(forgeInstallerFile).size !== parseInt(res.headers["content-length"])) {
-                const { data, headers } = await Axios({
-                    url: forgeInstallerURL,
-                    method: 'GET',
-                    responseType: 'stream'
-                })
-                const totalLength = headers['content-length']
-                let receivedBytes = 0
-                const writer = fs.createWriteStream(forgeInstallerFile)
-                data.on('data', (chunk) => {
-                    receivedBytes += chunk.length
-                    setUpdateText("DownloadingForge")
-
-                    setUpdateProgress((100.0 * receivedBytes / totalLength))
-                })
-                data.pipe(writer)
-                writer.on('error', err => {
-                    gameLogger.error(err.message)
-                    updateError("ForgeError: " + err.message)
-                    reject()
-                })
-
-                data.on('end', async function () {
-                    if (fs.statSync(forgeInstallerFile).size == totalLength) {
-                        setUpdateText("Forge was successfully downloaded!")
-                        gameLogger.log("Forge was successfully downloaded!")
-                        resolve()
-                    }
-                    else {
-                        reject()
-
-                    }
-                })
-
-            }
-            else {
-                setUpdateText('Forge installed')
-                gameLogger.log("Forge installer is already installed")
-                resolve()
-            }
-
-        } catch (err) {
-            gameLogger.error(err.message)
-            updateError("ForgeError: " + err.message)
-            reject()
-
+        } catch {
+            gameLogger.log("Forge installer not found or incomplete. Starting download...");
         }
-    })
 
+        // Загрузка файла Forge
+        const { data, headers } = await Axios({
+            url: forgeInstallerURL,
+            method: 'GET',
+            responseType: 'stream'
+        });
+
+        let receivedBytes = 0;
+        const writer = fs.createWriteStream(forgeInstallerFile);
+
+        // Обновление прогресса скачивания
+        data.on('data', (chunk) => {
+            receivedBytes += chunk.length;
+            setUpdateText("Downloading Forge");
+            setUpdateProgress((100.0 * receivedBytes) / totalLength);
+        });
+
+        // Пишем данные в файл
+        data.pipe(writer);
+
+        writer.on('finish', async () => {
+            try {
+                const stats = await fs.promises.stat(forgeInstallerFile);
+                if (stats.size === totalLength) {
+                    setUpdateText("Forge downloaded!");
+                    gameLogger.log("Forge was successfully downloaded!");
+                } else {
+                    throw new Error("File size mismatch after download");
+                }
+            } catch (err) {
+                throw err;
+            }
+        });
+
+        writer.on('error', (err) => {
+            fs.promises.unlink(forgeInstallerFile).catch(console.error); // Удаляем файл в случае ошибки
+            throw err;
+        });
+
+    } catch (err) {
+        if (retries > 0) {
+            gameLogger.warn(`Retrying Forge download. Retries left: ${retries - 1}`);
+            setTimeout(() => downloadForge(retries - 1), 2000);  // Ретрай через 2 секунды
+        } else {
+            gameLogger.error(`Forge download failed: ${err.message}`);
+            updateError(`ForgeError: ${err.message}`);
+        }
+    }
 }
 
 // Глобальные переменные для отслеживания общего прогресса
