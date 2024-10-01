@@ -295,70 +295,126 @@ function downloadForge() {
 
 }
 
-let totalModsSize = 0
-let currentModsSize = 0
-
+// Глобальные переменные для отслеживания общего прогресса
+let totalModsSize = 0;       // Общий размер всех модов
+let currentModsSize = 0;     // Текущий объем загруженных данных
 
 async function checkMods() {
     const getModsUrl = ConfigManager.getModSource()
     const MODS_URL = getModsUrl ? `${getModsUrl}/mine/mods.json` : main.MODS_URL
-    if (MODS_URL) {
-        try {
-            setUpdateText("Checking mods")
-            setUpdateProgress(0)
-
-            const modsDir = path.join(ConfigManager.getGameDirectory(), "mods")
-
-            if (!fs.existsSync(modsDir)) {
-                fs.mkdirSync(modsDir)
-            }
-
-            const response = await Axios.get(MODS_URL)
-
-            for (let i = 0; i < response.data.mods.length; i++) {
-                const modFile = path.join(modsDir, response.data.mods[i].file)
-
-                if (fs.existsSync(modFile)) {
-                    const modFileContent = fs.readFileSync(modFile)
-                    let modSha1 = crypto.createHash("sha1").update(modFileContent).digest("hex")
-
-                    if (modSha1 !== response.data.mods[i].sha1) {
-                        fs.unlinkSync(modFile)
-                        totalModsSize += response.data.mods[i].size
-                    } else {
-                        continue
-                    }
-                } else {
-                    totalModsSize += response.data.mods[i].size
-                }
-            }
-
-            for (let i = 0; i < response.data.mods.length; i++) {
-                const modFile = path.join(modsDir, response.data.mods[i].file)
-
-                if (fs.existsSync(modFile)) {
-                    const modFileContent = fs.readFileSync(modFile)
-                    let modSha1 = crypto.createHash("sha1").update(modFileContent).digest("hex")
-
-                    if (modSha1 !== response.data.mods[i].sha1) {
-                        fs.unlinkSync(modFile)
-                        await downloadMod(response.data.mods[i].downloadURL, modFile, response.data.mods[i].size)
-                    } else {
-                        continue
-                    }
-                } else {
-                    await downloadMod(response.data.mods[i].downloadURL, modFile, response.data.mods[i].size)
-                }
-            }
-            gameLogger.log(`All mods have been processed successfully.`)
-            return true
-        } catch (err) {
-            gameLogger.error(`Error during mods download: ${err?.message}`)
-            updateError("ModsError: " + err?.message)
-            return false
-        }
-    } else {
+    if (!MODS_URL) {
         gameLogger.error("Mods URL is not defined.")
+        return false
+    }
+
+    try {
+        setUpdateText("Checking mods")
+        setUpdateProgress(0)
+
+        const modsDir = path.join(ConfigManager.getGameDirectory(), "mods")
+        await fs.promises.mkdir(modsDir, { recursive: true })
+
+        const response = await Axios.get(MODS_URL)
+        const mods = response.data.mods
+
+        // Подсчет общего размера модов
+        totalModsSize = mods.reduce((acc, mod) => acc + mod.size, 0)
+
+        // Проход по модам для проверки и загрузки
+        for (const mod of mods) {
+            const modFile = path.join(modsDir, mod.file)
+            let shouldDownload = false
+
+            if (await fileExists(modFile)) {
+                const modFileContent = await fs.promises.readFile(modFile)
+                const modSha1 = crypto.createHash("sha1").update(modFileContent).digest("hex")
+
+                if (modSha1 !== mod.sha1) {
+                    await fs.promises.unlink(modFile)
+                    shouldDownload = true
+                }
+            } else {
+                shouldDownload = true
+            }
+
+            if (shouldDownload) {
+                await downloadMod(mod.downloadURL, modFile, mod.size)
+            }
+        }
+
+        gameLogger.log(`All mods have been processed successfully.`)
+        return true
+
+    } catch (err) {
+        gameLogger.error(`Error during mods download: ${err?.message}`)
+        updateError("ModsError: " + err?.message)
+        return false
+    }
+}
+
+async function downloadMod(fileURL, targetPath, modSize) {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const { data } = await Axios({
+                url: fileURL,
+                method: 'GET',
+                responseType: 'stream'
+            });
+
+            const writer = fs.createWriteStream(targetPath);
+            let downloadedSize = 0;
+
+            // Обновление прогресса загрузки всех модов
+            data.on('data', (chunk) => {
+                downloadedSize += chunk.length;
+                currentModsSize += chunk.length; // Добавляем к общему прогрессу
+
+                setUpdateText("Downloading Mods");
+                setUpdateProgress((100 * currentModsSize) / totalModsSize);  // Прогресс для всех модов
+            });
+
+            // Привязка к стримам
+            data.pipe(writer);
+
+            // Обработка завершения записи
+            writer.on('finish', async () => {
+                try {
+                    const stats = await fs.promises.stat(targetPath);
+                    if (stats.size === modSize) {
+                        resolve();
+                    } else {
+                        reject(new Error(`File size mismatch: expected ${modSize}, but got ${stats.size}`));
+                    }
+                } catch (err) {
+                    reject(err);
+                }
+            });
+
+            writer.on('error', (err) => {
+                fs.promises.unlink(targetPath).catch(console.error); // Удаляем файл в случае ошибки
+                gameLogger.error(`Write stream error: ${err.message}`);
+                reject(err);
+            });
+
+        } catch (err) {
+            if (retries > 0) {
+                gameLogger.warn(`Retrying download for ${fileURL}. Retries left: ${retries - 1}`);
+                setTimeout(() => downloadMod(fileURL, targetPath, modSize, retries - 1).then(resolve).catch(reject), 2000);  // Ретрай через 2 секунды
+            } else {
+                gameLogger.error(`Download failed after ${retries} retries: ${fileURL}`);
+                updateError(`ModsError: ${err.message} = ${fileURL}`);
+                reject(err);
+            }
+        }
+    });
+}
+
+// Вспомогательная функция для проверки существования файла
+async function fileExists(path) {
+    try {
+        await fs.promises.access(path)
+        return true
+    } catch {
         return false
     }
 }
@@ -408,43 +464,4 @@ async function analyseMods() {
         updateError("ModsError: " + err.message)
         return false
     }
-}
-
-async function downloadMod(fileURL, targetPath, modSize) {
-    return new Promise(async (resolve, reject) => {
-
-        try {
-            const { data } = await Axios({
-                url: fileURL,
-                method: 'GET',
-                responseType: 'stream'
-            })
-            //const totalLength = headers['content-length']
-            const writer = fs.createWriteStream(targetPath)
-            data.on('data', (chunk) => {
-                currentModsSize += chunk.length
-                setUpdateText("DownloadingMods")
-                setUpdateProgress((100 * currentModsSize / totalModsSize))
-            })
-            data.pipe(writer)
-            writer.on('error', err => {
-                gameLogger.error(err?.message)
-                updateError("ModsError: " + err?.message)
-                reject()
-            })
-
-            writer.on('close', () => {
-                if (fs.statSync(targetPath).size == modSize) {
-                    resolve()
-                }
-                else {
-                    reject()
-                }
-            })
-
-        } catch (err) {
-            updateError(`ModsError: ${err?.message} = ${fileURL}`)
-            console.error(err)
-        }
-    })
 }

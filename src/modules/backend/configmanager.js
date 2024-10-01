@@ -243,8 +243,6 @@ exports.setMaxRAM = function (maxRAM) {
     config.settings.java.maxRAM = maxRAM
 }
 
-
-//TODO VR PREFIX
 exports.isVrPrefixEnabled = function () {
     return config.settings.launcher.vrPrefix ? "-XX:+UseZGC" : ""
 }
