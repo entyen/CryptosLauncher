@@ -17,7 +17,7 @@ let adminWindow
 const createWindow = () => {
     win = new BrowserWindow({
         width: 1180,
-        height: 729,
+        height: 730,
         webPreferences: {
             contextIsolation: true,
             preload: path.join(__dirname, 'preload.js'),
@@ -122,8 +122,8 @@ app.on("activate", () => {
 })
 
 // Выбор канала обновлений (можно сохранять это в конфигурации)
-let updateChannel = ConfigManager.getUpdateChannel() || 'latest';
-autoUpdater.channel = updateChannel;
+// let updateChannel = ConfigManager.getUpdateChannel() || 'latest';
+// autoUpdater.channel = updateChannel;
 
 ipcMain.on('check-auto-update', async () => {
     try {
@@ -171,8 +171,8 @@ ipcMain.on('check-auto-update', async () => {
 
 // exports.LAUNCHER_CONFIG = "./config.json"
 exports.LAUNCHER_NAME = "MC Launcher"
-exports.MC_VERSION = "1.20.1"
-exports.FORGE_VERSION = "47.3.7"
+exports.MC_VERSION = "1.20.4"
+exports.FORGE_VERSION = "49.1.23"
 exports.JRE_WINDOWS = "https://dl.grk.pw/mine/jre-windows.zip"
 exports.JRE_LINUX = "https://dl.grk.pw/mine/jre-linux.zip"
 exports.JRE_OSX = "https://dl.grk.pw/mine/jre-osx.zip"

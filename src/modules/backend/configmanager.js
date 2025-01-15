@@ -312,5 +312,8 @@ exports.setModSource = function (url) {
 exports.getModSource = () => config?.settings?.launcher?.modSource
 
 exports.getUpdateChannel = () => {
+    if (!config) {
+        throw new Error("Settings is null");
+    }
     return config.settings.launcher.updateChannel
 }
