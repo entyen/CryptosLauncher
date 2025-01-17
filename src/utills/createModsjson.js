@@ -4,7 +4,7 @@ const path = require("path")
 const ConfigManager = require("../modules/backend/configmanager")
 
 const sysRoot = process.env.APPDATA || (process.platform == "darwin" ? process.env.HOME + "/Library/Application Support" : process.env.HOME)
-const modsDir = path.join(sysRoot, "./.minecraft", "mods")
+const modsDir = path.join(sysRoot, "./.ctlaucher", "mods")
 
 let modFiles = { mods: [] }
 

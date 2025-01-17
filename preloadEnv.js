@@ -11,7 +11,7 @@ if (!GH_TOKEN) {
 }
 
 // Устанавливаем команду для выполнения
-const command = `cross-env GH_TOKEN=${GH_TOKEN} npx electron-builder --win --linux --publish always`;
+const command = `cross-env GH_TOKEN=${GH_TOKEN} npx electron-builder --win --publish always`;
 
 // Запускаем команду
 try {
