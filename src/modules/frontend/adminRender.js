@@ -18,3 +18,8 @@ generateJsonButton.addEventListener("click", async (event) => {
 
 const disable = (obj) => obj.setAttribute("disabled", true)
 const enable = (obj) => obj.removeAttribute("disabled")
+
+const lnopen = document.getElementById("launcher-folder-open")
+lnopen.addEventListener("click", async (event) => {
+  await window.ipc.send("launcher-folder-open")
+})

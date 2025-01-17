@@ -1,20 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'"
+    />
     <link rel="stylesheet" href="./style.css" />
     <title>Admin Tools</title>
-</head>
+  </head>
 
-<body class="app-admin-tools">
+  <body class="app-admin-tools">
     <div class="admin-tools">
-        <button id="modsjson-generate">Generate mods.json</button>
-        <a id="__progress-info">...</a>
+      <button id="modsjson-generate">Generate mods.json</button>
+      <a id="__progress-info">...</a>
+      <button id="launcher-folder-open">
+        <img src="../../../images/folder.png" alt="Launcher Folder" />
+      </button>
     </div>
-</body>
-<script src="./adminRender.js"></script>
-
+  </body>
+  <script src="./adminRender.js"></script>
 </html>

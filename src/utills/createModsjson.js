@@ -4,13 +4,14 @@ const path = require("path")
 const ConfigManager = require("../modules/backend/configmanager")
 
 const sysRoot = process.env.APPDATA || (process.platform == "darwin" ? process.env.HOME + "/Library/Application Support" : process.env.HOME)
-const modsDir = path.join(sysRoot, "./.ctlaucher", "mods")
+const modsDir = path.join(sysRoot, "./.ctlauncher", "mods")
 
 let modFiles = { mods: [] }
 
 async function GenerateModsJson() {
     return new Promise((resolve, reject) => {
         const MODS_URL = ConfigManager.getModSource()
+        const LAUNCHER_DIRECTORY = ConfigManager.getLauncherDirectory()
         
         // Чтение директории
         fs.readdir(modsDir, (err, files) => {
@@ -35,7 +36,7 @@ async function GenerateModsJson() {
 
             // Запись результата в JSON файл
             const modFilesJSON = JSON.stringify(modFiles);
-            fs.writeFile('./mods.json', modFilesJSON, err => {
+            fs.writeFile(LAUNCHER_DIRECTORY + '/mods.json', modFilesJSON, err => {
                 if (err) {
                     reject(`Error writing file: ${err}`);
                 } else {
