@@ -59,7 +59,7 @@ const DEFAULT_CONFIG = {
             keepLauncherOpen: false,
             vrPrefix: false,
             useLauncherJava: true,
-            modSource: "https://dl.grk.pw",
+            modSource: "https://yam.grk.pw",
             updateChannel: "latest"
         }
     },

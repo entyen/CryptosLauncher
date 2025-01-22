@@ -77,9 +77,9 @@ async function updateAndLaunch(jre = null) {
             gameLogger.log("Launching the game...");
 
             // Асинхронный запуск игры с ожиданием
-            await launcher.launch(opts);
-            setUpdateProgress(100);
             setUpdateText("Launching Game");
+            setUpdateProgress(100);
+            await launcher.launch(opts);
 
             // Закрытие окна после небольшого ожидания
             setTimeout(() => {
