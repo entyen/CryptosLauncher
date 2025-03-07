@@ -270,6 +270,10 @@ svg:hover {
   background-color: black;
 }
 
+#errorInfo:hover {
+  cursor: pointer;
+}
+
 input,
 button {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);

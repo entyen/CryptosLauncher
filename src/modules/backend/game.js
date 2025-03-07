@@ -1,4 +1,6 @@
 const { Client, Authenticator } = require('minecraft-launcher-core');
+const minecraftData = require('minecraft-data')
+const mcData = minecraftData('1.20.4')
 const ipc = require("electron").ipcMain
 const path = require("path")
 const fs = require("fs")

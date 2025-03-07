@@ -96,7 +96,11 @@ const errorInfo = document.getElementById("errorInfo")
 
 window.ipc.receive("launcher-update-error", (err) => {
   console.log(err)
-  errorInfo.innerHTML = "Error Click Ctrl + Shift + I"
+  errorInfo.innerHTML = `Error, Click Here for more info<br>${err}`
+})
+
+errorInfo.addEventListener("click", async () => {
+  await window.ipc.send("open-dev-tools");
 })
 
 let keySequence = [];

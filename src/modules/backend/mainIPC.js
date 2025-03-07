@@ -1,6 +1,6 @@
 const configManager = require("./configmanager")
 const os = require("os")
-const { app, shell } = require('electron')
+const { app, shell, BrowserWindow } = require('electron')
 const ipc = require("electron").ipcMain
 const GenerateModsJson = require('../../utills/createModsjson')
 
@@ -77,6 +77,13 @@ exports.initMainIPC = () => {
     } catch (error) {
       console.error(error);
       event.returnValue = error
+    }
+  });
+
+  ipc.on('open-dev-tools', (event) => {
+    const win = BrowserWindow.getFocusedWindow();
+    if (win) {
+      win.webContents.openDevTools();
     }
   });
 }

@@ -1,6 +1,6 @@
 {
   "name": "cryptos-launcher",
-  "version": "1.1.28",
+  "version": "1.1.29",
   "description": "Minecraft launcher for Cryptos Server",
   "main": "launcher.js",
   "scripts": {
@@ -20,6 +20,7 @@
     "electron-log": "^5.2.0",
     "electron-updater": "^6.3.4",
     "fs-extra": "^11.2.0",
+    "minecraft-data": "^3.83.1",
     "minecraft-launcher-core": "^3.18.2"
   },
   "devDependencies": {
