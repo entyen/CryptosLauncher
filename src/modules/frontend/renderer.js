@@ -14,6 +14,12 @@ gfopen.addEventListener("click", async (event) => {
 
 const username = document.getElementById("username")
 username.value = window.ipc.sendSync("get-username")
+const password = document.getElementById("password")
+
+const getToken = document.getElementById("login-button")
+getToken.addEventListener("click", (event) => {
+  window.ipc.send("get-token", { username: username.value, password: password.value })
+})
 
 const rammax = document.getElementById("ram-max")
 const rammaxnumb = document.getElementById("ram-max-numb")
