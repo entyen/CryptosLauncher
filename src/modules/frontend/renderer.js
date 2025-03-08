@@ -16,9 +16,11 @@ const username = document.getElementById("username")
 username.value = window.ipc.sendSync("get-username")
 const password = document.getElementById("password")
 
+const loginInfo = document.getElementById("login-info")
 const getToken = document.getElementById("login-button")
 getToken.addEventListener("click", (event) => {
-  window.ipc.send("get-token", { username: username.value, password: password.value })
+  const res = window.ipc.sendSync("get-token", { username: username.value, password: password.value })
+  loginInfo.innerHTML = res
 })
 
 const rammax = document.getElementById("ram-max")

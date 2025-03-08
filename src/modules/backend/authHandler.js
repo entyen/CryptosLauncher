@@ -59,13 +59,13 @@ module.exports = async (event, userData) => {
                 saveConfigToFile(configData);
 
                 // Отправляем успешный ответ клиенту
-                event.reply("auth-success", { message: "Авторизация успешна!" });
+                return ("auth-success", { message: "Авторизация успешна!" });
             } else {
                 // Отправляем ошибку клиенту
-                event.reply("auth-error", { message: result.message || "Ошибка авторизации" });
+                return ("auth-error", { message: result.message || "Ошибка авторизации" });
             }
         } catch (error) {
             console.error("Ошибка при получении токена:", error);
-            event.reply("auth-error", { message: "Ошибка сервера" });
+            return ("auth-error", { message: "Ошибка сервера" });
         }
 };

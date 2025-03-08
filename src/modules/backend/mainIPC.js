@@ -83,7 +83,8 @@ exports.initMainIPC = () => {
 
   //TODO need normalisatiion on other files
   ipc.on("get-token", async (event, userData) => {
-    await authHandler(event, userData)
+    const res = await authHandler(event, userData)
+    event.returnValue = res.message
   });
 
   ipc.on("open-dev-tools", (event) => {
